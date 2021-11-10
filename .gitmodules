@@ -1,0 +1,4 @@
+[submodule "spec/internal_test_hyrax"]
+	path = spec/internal_test_hyrax
+	url = git@github.com:ubiquitypress/hyrax_test_app.git
+  branch = main

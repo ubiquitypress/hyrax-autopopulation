@@ -1,0 +1,25 @@
+.bundle/
+log/*.log
+pkg/
+#spec/test_app/db/*.sqlite3
+#spec/test_app/db/*.sqlite3-journal
+#spec/test_app/log/*.log
+#spec/test_app/node_modules/
+#spec/test_app/yarn-error.log
+#spec/test_app/storage/
+#spec/test_app/tmp/
+
+spec/internal_test_hyku/log/*.log
+spec/internal_test_hyku/node_modules/
+spec/internal_test_hyku/yarn-error.log
+spec/internal_test_hyku/storage/
+spec/internal_test_hyku/tmp/
+db/migrate/*.hyrax.rb
+.byebug_history
+coverage/
+tmp/
+# rspec failure tracking
+.rspec_status
+config/initializers/hyrax/orcid/configure.rb
+core
+config/definitions.rb
