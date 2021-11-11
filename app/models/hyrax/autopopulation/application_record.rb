@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Hyrax
   module Autopopulation
     class ApplicationRecord < ActiveRecord::Base
