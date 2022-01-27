@@ -1,0 +1,33 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3">
+      <!-- <ul class="nav nav-pills nav-stacked"> -->
+      <ul class="navbar navbar-default navbar-fixed-side">
+        <li class="active"><a href="#sources" role="tab" data-toggle="tab"><%= t('hyrax.autopopulation.sources') %></a></li>
+        <li><a href="#preference" role="tab" data-toggle="tab"><%= t('hyrax.autopopulation.preference') %></a></li>
+      </ul>
+    </div>
+
+    <div class="col-md-9">
+      <div class="tab-content">
+        <div id="sources" class="tab-pane active">
+          <div class="panel panel-default labels">
+            <% if Rails.application.config.hyrax_autopopulation.storage_type == "redis" %>
+              <%= render "hyrax_autopopulation_settings_form" %>
+            <% else %>
+              <%= render "hyku_autopopulation_settings_form" %>
+            <% end %>
+          </div>
+        </div>
+
+        <div id="preference" class="tab-pane ">
+          <div class="panel panel-default labels">
+            <div class="panel-body">
+              same
+            </div>
+          </div>
+        </div>
+       </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,79 @@
+
+<% content_for(:page_title) { "Work Autopopulation" } %>
+
+<% provide :page_header do %>
+    <h1><span class="fa fa-arrow-circle-down" aria-hidden="true"></span> <%= t("hyrax.autopopulation.page_header") %></h1>
+
+<% end %>
+  
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default tabs">
+
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="active">
+            <a href="#draft-import" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.tabs.draft") %></a>
+          </li>
+          <li>
+            <a href="#approved-import" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.tabs.approved") %></a>
+          </li>
+          <li>
+            <a href="#autopopulation-settings" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.tabs.settings") %></a>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+
+          <div id="draft-import" class="tab-pane active">
+            <div class="panel panel-default labels">
+              <div class="panel-body">
+
+                <div class="table-responsive">
+                   <%# form_tag hyrax_autopopulations.approve_multiple_admin_autopopulations_path, method: :put do  %>
+
+                   <%# render "index_table", works: @draft_works %>
+            
+                   <%# submit_tag "Approve Selected" %>
+                  <%# end %>
+
+                </div>
+             </div>
+            </div>
+          </div>
+
+          <div id="approved-import" class="tab-pane">
+            <div class="panel panel-default labels">
+              <div class="panel-body">
+
+                <%= render "index_table", works: @approved_works %>
+
+               <div>
+            </div>
+          </div>
+
+      
+        </div>
+      
+       </div> 
+          
+
+         <div id="autopopulation-settings" class="tab-pane">
+           <div class="panel panel-default labels">
+             <div class="panel-body">
+               <div class="table-responsive">
+                 <%= render "settings_form", account: @account %>
+               </div>
+            <div>
+          </div>
+         </div>
+    
+      </div>
+     </div>
+
+    </div>
+
+    </div>
+  </div>
+</div>
+  

@@ -1,0 +1,18 @@
+en:
+  hyrax:
+    autopopulation:
+      admin:
+        sidebar:
+          autopopulations: Autopopulation
+      preference: Autopopulation Preference
+      sources: Autopopulation Sources
+      page_header: Autopopulate Works
+      tabs:
+        draft: Draft Imports
+        approved: Approved Imports
+        settings: Autopopulation Preferences
+      scan:
+        unpaywall: Scan Unpaywall Using DOI
+        orcid: PerformScan with Orcid
+      persistence:
+        sucess_saving_orcid_doi: "The submitted Ids were currently saved"
