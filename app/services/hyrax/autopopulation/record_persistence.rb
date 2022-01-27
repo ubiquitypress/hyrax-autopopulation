@@ -11,17 +11,12 @@ module Hyrax
       #
       #   Example
       #
-      # { "settings" => {
-      #      "orcid_list" => ["0000-0002-0787-9826A"],
-      #       "doi_list" => ["10.36001/ijphm.2018.v9i1.2693"],
-      #        "hyrax_orcid_settings" => { }
-      #  }
-      #  }
+      # { "settings" => { "orcid_list" => ["0000-0002-0787-9826A"],
+      #                   "doi_list" => ["10.36001/ijphm.2018.v9i1.2693"],
+      #                    "hyrax_orcid_settings" => { } }
+      # }
       #
       def save(data, account = nil)
-        @data = data
-        @account = account
-
         if account.present?
           save_to_postgres(data, account)
         else

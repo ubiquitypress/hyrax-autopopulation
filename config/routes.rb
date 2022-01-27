@@ -7,6 +7,5 @@ Hyrax::Autopopulation::Engine.routes.draw do
         post :settings
       end
     end
-
   end
 end

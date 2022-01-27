@@ -8,7 +8,7 @@ module Hyrax
       config.generators do |g|
         g.test_framework :rspec
         g.fixture_replacement :factory_bot
-        g.factory_bot dir: 'spec/factories'
+        g.factory_bot dir: "spec/factories"
       end
 
       config.before_initialize do
@@ -19,7 +19,7 @@ module Hyrax
 
       # Prepend our views so they have precedence
       config.after_initialize do
-        ActionController::Base.prepend_view_path(paths['app/views'].existent)
+        ActionController::Base.prepend_view_path(paths["app/views"].existent)
       end
 
       # Allows us to access the configuration object from Rails application config

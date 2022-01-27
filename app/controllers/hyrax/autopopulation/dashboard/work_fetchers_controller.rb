@@ -6,11 +6,11 @@ module Hyrax
       class WorkFetchersController < ApplicationController
         before_action :ensure_authorized!
         include ::Hyrax::ThemedLayoutController
-        with_themed_layout 'dashboard'
+        with_themed_layout "dashboard"
 
         def index
-          add_breadcrumb t(:'hyrax.controls.home'), ::Hyrax::Engine.routes.url_helpers.root_path
-          add_breadcrumb t(:'hyrax.dashboard.breadcrumbs.admin'), ::Hyrax::Engine.routes.url_helpers.dashboard_path
+          add_breadcrumb t("hyrax.controls.home"), ::Hyrax::Engine.routes.url_helpers.root_path
+          add_breadcrumb t("hyrax.dashboard.breadcrumbs.admin"), ::Hyrax::Engine.routes.url_helpers.dashboard_path
 
           @approved_works = []
           @draft_works = []
@@ -18,11 +18,13 @@ module Hyrax
 
         # Uses Hyrax::Autopopulation::RecordPersistence class via the config object
         def settings
-          if config_object.storage_type == "activerecord"
-            config_object.persistence_class.constantize.new.save(autopopulation_settings_params, current_account)
-          else
-            config_object.persistence_class.constantize.new.save(autopopulation_settings_params)
-          end
+          args = if config_object.storage_type == "activerecord"
+                   [autopopulation_settings_params, current_account]
+                 else
+                   [autopopulation_settings_params]
+                 end
+
+          config_object.persistence_class.constantize.new.save(*args)
 
           flash[:notice] = I18n.t("hyrax.persistence.sucess_saving_orcid_doi")
           redirect_to hyrax_autopopulation.work_fetchers_path
@@ -31,7 +33,7 @@ module Hyrax
         private
 
           def autopopulation_settings_params
-            params.permit(settings: [:doi_list, :orcid_list, :work_ids, :id])
+            params.permit(settings: %i[doi_list orcid_list work_ids id])
           end
 
           def ensure_authorized!

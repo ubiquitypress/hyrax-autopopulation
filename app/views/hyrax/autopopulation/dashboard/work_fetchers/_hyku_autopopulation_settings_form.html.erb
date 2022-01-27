@@ -1,19 +1,18 @@
-<%= form_for(current_account, url: hyrax_autopopulation.settings_work_fetchers_path(current_account), :html => { class: 'form control' }) do |f| %>
+<%= form_for(current_account, url: hyrax_autopopulation.settings_work_fetchers_path(current_account), :html => { class: "form control" }) do |f| %>
     <div class="panel-body">
      <div class="form-group">
        <%=f.fields_for :settings do |ff| %>
          <%= ff.label :orcid_ids_for_autopopulation %><br>
-         <%= ff.text_field :orcid_list, :value => account.settings.dig("autopopulation", "orcid_list"), class: 'form-control', id: "doi_autopopulation_settings" %><br>
+         <%= ff.text_field :orcid_list, value: account.settings.dig("autopopulation", "orcid_list"), class: "form-control", id: "doi_autopopulation_settings" %><br>
          <br/>
          <%= ff.label :doi_for_autopopulation %><br>
-         <%= ff.text_field :doi_list, :value => account.settings.dig("autopopulation", "doi_list"), class: 'form-control', id: "orcids_autopopulation_settings" %><br>
+         <%= ff.text_field :doi_list, value: account.settings.dig("autopopulation", "doi_list"), class: "form-control", id: "orcids_autopopulation_settings" %><br>
 
        <% end %>
      </div>
-
    </div>
 
    <div class="panel-footer">
-     <%= f.submit class: 'btn btn-primary pull-right' %>
+     <%= f.submit class: "btn btn-primary pull-right" %>
    </div>
  <% end %>

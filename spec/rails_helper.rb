@@ -1,19 +1,15 @@
 # frozen_string_literal: true
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-require 'spec_helper'
-require File.expand_path('internal_test_hyrax/spec/rails_helper.rb', __dir__)
-ENV['RAILS_ENV'] ||= 'test'
-# require File.expand_path('../config/environment', __dir__)
+require "spec_helper"
+require File.expand_path("internal_test_hyrax/spec/rails_helper.rb", __dir__)
+ENV["RAILS_ENV"] ||= "test"
+require File.expand_path("internal_test_hyrax/config/environment", __dir__)
 
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
-require 'rspec/rails'
-require 'devise'
-# Add additional requires below this line. Rails is not loaded until this point!
-
-require 'factory_bot_rails'
-FactoryBot.definition_file_paths = [File.expand_path("spec/factories", Hyrax::Autopopulation::Engine.root)]
-FactoryBot.find_definitions
+require "factory_bot_rails"
+require "rspec/rails"
+require "devise"
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -45,10 +41,9 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  # config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
   config.include FactoryBot::Syntax::Methods
-  
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
@@ -74,13 +69,13 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   # Skip internal tests
-  config.exclude_pattern = './spec/internal_test_hyrax/spec/**/*_spec.rb'
+  config.exclude_pattern = "./spec/internal_test_hyrax/spec/**/*_spec.rb"
 
   config.include ActiveSupport::Testing::TimeHelpers
 
   # Internal Tests to skip
   # Make sure this around is declared first so it runs before other around callbacks
-  skip_internal_test_list = ['./spec/internal_test_hyrax/spec/features/create_generic_work_spec.rb']
+  skip_internal_test_list = ["./spec/internal_test_hyrax/spec/features/create_generic_work_spec.rb"]
   config.around do |example|
     if skip_internal_test_list.include? example.file_path
       skip "Internal test skipped."

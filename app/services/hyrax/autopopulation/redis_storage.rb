@@ -56,7 +56,7 @@ module Hyrax
 
       # A wrapper for fetching Hash from Redis
       def settings(key)
-        instance.scard('array').positive? && instance.smembers(key)
+        instance.scard("array").positive? && instance.smembers(key)
       end
 
       # A wrapper for deleting from Redis
