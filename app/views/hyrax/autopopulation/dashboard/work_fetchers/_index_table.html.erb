@@ -1,0 +1,51 @@
+
+  <table class="table table-condensed table-striped datatable">
+  <thead>
+    <tr>
+      <th width="40%">Work Title</th>
+      <th width="20%">Date Imported</th>
+      <th width="20%">Authors</th>
+      <th width="20%">Work Status</th>
+      <th width="20%">File Status</th>
+      <th width="20%">Approve</th>
+      <th width="20%">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% works.each do |document| %>
+      <tr>
+        <td>
+          <%= link_to document, [main_app, document] %>
+        </td>
+
+        <td>
+          <%= document.date_modified %>
+        </td>
+
+        <td>
+          <%# safe_join(document.creator, tag(:br)) %>
+          <%# document.creator_display.try(:to_sentence) %>
+          <%= document.creator_display %>
+        </td>
+
+        <td>
+          <span class="state state-pending"><%= document.autopopulation_status %></span>
+        </td>
+
+        <td>
+          no file
+        </td>
+
+        <td>
+          <% if document.autopopulation_status == "draft" %>
+            <span><%= check_box_tag "work_ids[]",  document.id %> </span>
+          <% end %>
+        </td>
+
+        <td>
+          <%= render "work_action_menu", document: document %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

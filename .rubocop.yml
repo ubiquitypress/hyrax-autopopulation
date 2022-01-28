@@ -7,11 +7,24 @@ AllCops:
   Exclude:
     - 'spec/internal_test_hyrax/**/*'
     - 'vendor/**/*'
+    - 'config/**/*'
+
 Metrics/BlockLength:
   Max: 80
   Exclude:
     - 'spec/**/*.rb'
-    -
+    - 'lib/hyrax/autopopulation/engine.rb'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'spec/**/*.rb'
+    - 'hyrax-autopopulation.gemspec'
+    - 'lib/hyrax/autopopulation/engine.rb'
+
+Metrics/AbcSize:
+  Exclude:
+    - 'lib/hyrax/autopopulation/engine.rb'
+
 RSpec/ExampleLength:
   Max: 25
 
@@ -20,10 +33,28 @@ Layout/LineLength:
 
 RSpec/DescribeClass:
   Exclude:
-    - 'spec/config/hyrax_events_spec.rb'
+    - 'spec/views/**/*'
 
 Style/FrozenStringLiteralComment:
   Enabled: true
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+  SupportedStyles:
+    - single_quotes
+    - double_quotes
+  Exclude:
+    - 'config/**/*'
+    - 'db/**/*'
+    - 'bin/**/*'
+    - 'app/bin/*'
+    - '**/*.gemfile'
+    - '**/*.gemspec'
+    - '**/*.rake'
+    - '**/*.ru'
+    - '**/Gemfile'
+    - '**/Rakefile'
+    - 'spec/internal_test_hyku/**/*'
 
 RSpec/LetSetup:
   Enabled: false

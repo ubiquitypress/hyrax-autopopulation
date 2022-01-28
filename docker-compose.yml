@@ -3,6 +3,7 @@ version: '3.4'
 volumes:
   fcrepo:
   solr:
+  db:
   redis:
   app:
   cache:
@@ -37,6 +38,21 @@ services:
     networks:
       internal:
 
+  db: &db
+    image: postgres:10-alpine
+    environment: &db_environment
+      PGDATA: /data
+      POSTGRES_PASSWORD: DatabaseFTW
+      POSTGRES_USER: postgres
+      POSTGRES_MULTIPLE_DATABASES: hyrax,hyrax_test
+    volumes:
+      - ./.docker-postgres:/docker-entrypoint-initdb.d
+      - db:/data
+    ports:
+      - "5432:5432"
+    networks:
+      internal:
+
   app: &app
     build:
       context: .
@@ -47,6 +63,12 @@ services:
     # command: bash -c "rm -f spec/internal_test_hyrax/tmp/pids/server.pid && bundle exec rails db:create && bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0"
     command: bash -c "rm -f spec/internal_test_hyrax/tmp/pids/server.pid && bundle install && bundle exec rails server -b 0.0.0.0"
     environment: &web_environment
+      DATABASE_ADAPTER: postgresql
+      DATABASE_NAME: hyrax
+      DATABASE_HOST: db
+      DATABASE_PASSWORD: DatabaseFTW
+      DATABASE_USER: postgres
+      DATABASE_TEST_NAME: hyrax_test
       # End of copy
       FCREPO_HOST: fcrepo
       FCREPO_PORT: 8080
@@ -74,10 +96,12 @@ services:
     environment:
       <<: *web_environment
     depends_on:
+      - db
       - solr
       - fcrepo
       - redis
       - db_migrate
+      - workers
     stdin_open: true
     tty: true
     ports:
@@ -94,3 +118,15 @@ services:
       - redis:/data
     networks:
       internal:
+    ports:
+      - 6379:6379
+
+  workers:
+    <<: *app
+    command: bash -c "bundle install && bundle exec sidekiq -r spec/internal_test_hyrax/"
+    depends_on:
+      - db
+      - solr
+      - fcrepo
+      - redis
+      - db_migrate
