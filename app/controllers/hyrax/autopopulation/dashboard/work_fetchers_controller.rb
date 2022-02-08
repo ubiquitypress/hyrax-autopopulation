@@ -5,8 +5,8 @@ module Hyrax
     module Dashboard
       class WorkFetchersController < ApplicationController
         before_action :ensure_authorized!
-        include ::Hyrax::ThemedLayoutController
-        with_themed_layout "dashboard"
+        # include ::Hyrax::ThemedLayoutController
+        # with_themed_layout "dashboard"
 
         def index
           add_breadcrumb t("hyrax.controls.home"), ::Hyrax::Engine.routes.url_helpers.root_path
