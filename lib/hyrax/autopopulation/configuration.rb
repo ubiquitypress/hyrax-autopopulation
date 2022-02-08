@@ -25,6 +25,17 @@ module Hyrax
       config_accessor(:persistence_class) { "Hyrax::Autopopulation::RecordPersistence" }
       config_accessor(:is_hyrax_orcid_installed) { Object.const_defined?("OrcidIdentity") }
       config_accessor(:autopopulation_imported_work_status) { ["draft", "approved"] }
+      config_accessor(:query_class) { "Hyrax::Autopopulation::RecordFetcher" }
+      config_accessor(:create_work_class) { "Hyrax::Autopopulation::CreateWork" }
+      config_accessor(:unpaywall_client) { "Hyrax::Autopopulation::UnpaywallClient" }
+      config_accessor(:crossref_bolognese_client) { "Bolognese::Metadata" }
+      config_accessor(:orcid_client) { "Hyrax::Autopopulation::OrcidClient" }
+      config_accessor(:imported_work_status_service) { "Hyrax::Autopopulation::ImportedWorkStatusService" }
+      config_accessor(:orchestrator_class) { "Hyrax::Autopopulation::Orchestrator" }
+      config_accessor(:create_file_class) { "Hyrax::Autopopulation::CreateFile" }
+      config_accessor(:work_fetcher_job) { "Hyrax::Autopopulation::WorkFetcherJob" }
+      config_accessor(:approval_job) { "Hyrax::Autopopulation::ApprovalJob" }
+      config_accessor(:fetch_and_save_work_metadata) { "Hyrax::Autopopulation::FetchAndSaveWorkMetadata" }
     end
   end
 end

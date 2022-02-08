@@ -81,8 +81,10 @@ services:
       REDIS_HOST: redis
       SECRET_KEY_BASE: asdf
       SOLR_DEVELOPMENT_URL: http://solr:8983/solr/hyrax-development
-      SOLR_TEST_URL: http://solr:8983/solr/hyrax-development
+      SOLR_TEST_URL: http://solr:8983/solr/hyrax-test
       PASSENGER_APP_ENV: development
+    env_file:
+      - .env
     volumes:
       - app:/home/app/spec/internal_test_hyrax/tmp/uploads
       - assets:/home/app/spec/internal_test_hyrax/public/assets

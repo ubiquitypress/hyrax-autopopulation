@@ -68,7 +68,7 @@ module Hyrax
 
         # Create a redis instance, this will be moved to an initializer
         def instance
-          Redis.new(host: ENV["REDIS_HOST"], db: 15)
+          Redis.current = Redis_instance
         end
     end
   end

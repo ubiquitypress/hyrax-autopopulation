@@ -13,7 +13,7 @@ gem 'hyrax-autopopulation'
 
 And then execute:
 ```bash
-$ bundle
+$ bundle exec rails g hyrax:autopopulation:install
 ```
 
 Or install it yourself as:

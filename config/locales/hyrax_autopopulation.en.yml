@@ -10,9 +10,12 @@ en:
       tabs:
         draft: Draft Imports
         approved: Approved Imports
-        settings: Autopopulation Preferences
+        settings: Autopopulation Sources
       scan:
         unpaywall: Scan Unpaywall Using DOI
         orcid: PerformScan with Orcid
       persistence:
-        sucess_saving_orcid_doi: "The submitted Ids were currently saved"
+        success_saving_orcid_doi: The submitted ids were successfully saved
+        doi_fetch: Auto-population using DOI in progress, you will a see a notification when completed
+        orcid_fetch: Auto-population using ORCID in progress, you will a see a notification when completed
+        approve: Autopopulated works are being approved in the background. 

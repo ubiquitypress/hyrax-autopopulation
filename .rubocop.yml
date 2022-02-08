@@ -8,6 +8,7 @@ AllCops:
     - 'spec/internal_test_hyrax/**/*'
     - 'vendor/**/*'
     - 'config/**/*'
+    - 'lib/generators/hyrax/autopopulation/install_generator.rb'
 
 Metrics/BlockLength:
   Max: 80

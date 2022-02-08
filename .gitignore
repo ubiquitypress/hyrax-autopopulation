@@ -16,3 +16,6 @@ tmp/
 config/initializers/hyrax/autopopulation/configure.rb
 core
 config/definitions.rb
+.env.*
+.env
+app/views/hyrax/dashboard/sidebar/_repository_content.html.erb
