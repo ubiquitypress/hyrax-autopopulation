@@ -6,7 +6,7 @@
       <th width="20%">Date Imported</th>
       <th width="20%">Authors</th>
       <th width="20%">Work Status</th>
-      <th width="20%">File Status</th>
+      <th width="20%">File Added</th>
       <th width="20%">Approve</th>
       <th width="20%">Actions</th>
     </tr>
@@ -23,9 +23,11 @@
         </td>
 
         <td>
-          <%# safe_join(document.creator, tag(:br)) %>
-          <%# document.creator_display.try(:to_sentence) %>
-          <%= document.creator_display %>
+          <% if Rails.application.config.hyrax_autopopulation.storage_type == "activerecord" %>
+            <%= document.creator_display.try(:to_sentence)  %>
+          <% else %>
+            <%= document.creator.try(:to_sentence) %>
+          <% end %>
         </td>
 
         <td>
@@ -33,7 +35,7 @@
         </td>
 
         <td>
-          no file
+          <%= document["file_set_ids_ssim"]&.count %>
         </td>
 
         <td>

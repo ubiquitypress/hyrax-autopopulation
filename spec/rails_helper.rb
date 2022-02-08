@@ -10,6 +10,17 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require "factory_bot_rails"
 require "rspec/rails"
 require "devise"
+require "webmock/rspec"
+require "active_fedora/cleaner"
+require "noid/rails/rspec"
+
+# Try and suppress depreciation warnings
+ActiveSupport::Deprecation.silenced = true
+
+allowed_hosts = %w[chrome chromedriver.storage.googleapis.com fcrepo solr]
+WebMock.disable_net_connect!(allow_localhost: true, allow: allowed_hosts)
+
+Rails.application.routes.default_url_options[:host] = "www.example.com"
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -34,6 +45,14 @@ rescue ActiveRecord::PendingMigrationError => e
   puts e.to_s.strip
   exit 1
 end
+
+def clean_active_fedora_repository
+  ActiveFedora::Cleaner.clean!
+  # The JS is executed in a different thread, so that other thread
+  # may think the root path has already been created:
+  ActiveFedora.fedora.connection.send(:init_base_path)
+end
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -86,4 +105,26 @@ RSpec.configure do |config|
 
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Warden::Test::Helpers
+
+  config.before do
+    ActiveJob::Base.queue_adapter = :test
+  end
+
+  config.after do
+    # Ensuring we have a clear queue between each spec.
+    ActiveJob::Base.queue_adapter.enqueued_jobs  = []
+    ActiveJob::Base.queue_adapter.performed_jobs = []
+  end
+
+  config.before(:suite) do
+    clean_active_fedora_repository
+  end
+
+  config.after do
+    clean_active_fedora_repository
+  end
+
+  include Noid::Rails::RSpec
+  config.before(:suite) { disable_production_minter! }
+  config.after(:suite)  { enable_production_minter! }
 end

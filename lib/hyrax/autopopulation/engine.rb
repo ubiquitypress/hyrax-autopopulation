@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "bolognese/metadata"
+
 module Hyrax
   module Autopopulation
     class Engine < ::Rails::Engine
@@ -31,6 +33,29 @@ module Hyrax
       initializer "hyrax autopopulation config", before: :load_config_initializers do |app|
         app.config.hyrax_autopopulation = Hyrax::Autopopulation::Configuration.new
         Hyrax::Autopopulation::Config = app.config.hyrax_autopopulation
+      end
+
+      # Pre-existing Work type overrides and dynamic includes
+      def self.dynamically_include_mixins
+        ::Bolognese::Metadata.prepend ::Bolognese::Writers::HyraxWorkActorAttributes
+
+        if Object.const_defined?(:HykuAddons) || Object.const_defined?(:Hyku)
+          ::HykuAddons::WorkBase.include(Hyrax::Autopopulation::AutopopulationProperty)
+          ::HykuAddons::Schema::WorkBase.include(Hyrax::Autopopulation::AutopopulationProperty)
+          SolrDocument.include(Hyrax::Autopopulation::SolrDocumentBehavior)
+        else
+          ::Hyrax::BasicMetadata.include(Hyrax::Autopopulation::AutopopulationProperty)
+          ::Hyrax::BasicMetadata.include(Hyrax::Autopopulation::DoiProperty)
+          ::Hyrax::SolrDocumentBehavior.include(Hyrax::Autopopulation::SolrDocumentBehavior)
+        end
+      end
+
+      # Use #to_prepare because it reloads where after_initialize only runs once
+      # This might slow down every request so only do it in development environment
+      if Rails.env.development?
+        config.to_prepare { Hyrax::Autopopulation::Engine.dynamically_include_mixins }
+      else
+        config.after_initialize { Hyrax::Autopopulation::Engine.dynamically_include_mixins }
       end
     end
   end

@@ -5,6 +5,10 @@ Hyrax::Autopopulation::Engine.routes.draw do
       collection do
         patch :settings
         post :settings
+        post :fetch_with_doi
+        post :fetch_with_orcid
+        put :approve_multiple
+        put :approve_all
       end
     end
   end
