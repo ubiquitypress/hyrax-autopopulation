@@ -3,24 +3,24 @@
 module Hyrax
   module Autopopulation
     class CreateWork
-      attr_accessor :attributes, :user, :cname, :pdf_url
+      attr_accessor :attributes, :user, :account, :pdf_url
 
       # params [attributes] is a hash constructed from a crossref response that has been crosswalked by a custom Bolognese writer
       # example using the doi 10.1117/12.2004063
       # response = Bolognese::Metadata.new(input: '10.1117/12.2004063', from: "crossref")
       # attributes = response.build_work_actor_attributes
       #
-      def initialize(attributes, user, cname = nil)
-        AccountElevator.switch!(cname) if Rails.application.config.hyrax_autopopulation.storage_type == "activerecord"
+      def initialize(attributes, user, account = nil)
+        AccountElevator.switch!(account&.cname) if Rails.application.config.hyrax_autopopulation.storage_type == "activerecord"
+
+        @account = account
+        @user = user
 
         # This is not a property of any work, so it cannot be passed to the actor
         @pdf_url = attributes.delete(:unpaywall_pdf_url)
 
         pdf_url.present? && uploaded_file.present? && attributes.merge!(uploaded_files: uploaded_file)
-
         @attributes = attributes
-        @user = user
-        @cname = cname
       end
 
       def save
@@ -49,7 +49,7 @@ module Hyrax
         def uploaded_file
           # return unless pdf_url.present?
           file_class = Rails.application.config.hyrax_autopopulation.create_file_class.constantize
-          file = file_class.new(pdf_url, user).save
+          file = file_class.new(pdf_url, user, account).save
           file.is_a?(Hyrax::UploadedFile) ? [file.id] : false
         end
     end

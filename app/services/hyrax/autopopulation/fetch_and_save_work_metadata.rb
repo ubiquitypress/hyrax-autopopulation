@@ -33,7 +33,7 @@ module Hyrax
           # adding the file url since crossref does not have it
           work_data[:unpaywall_pdf_url] = unpaywall_data.dig("best_oa_location", "url_for_pdf")
 
-          config.create_work_class.constantize.new(work_data, user, account&.cname).save
+          config.create_work_class.constantize.new(work_data, user, account).save
         end
 
         def check_for_work_doi(doi)

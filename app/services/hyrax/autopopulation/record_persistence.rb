@@ -51,8 +51,8 @@ module Hyrax
 
           AccountElevator.switch!(account.cname)
 
-          doi_list = extract_doi_for_hyku(account)
-          orcid_list = extract_orcid_for_hyku(account)
+          doi_list = extract_doi_for_hyku(data, account)
+          orcid_list = extract_orcid_for_hyku(data, account)
           orcid_settings = hyku_set_hyrax_orcid_settings(data, account)
 
           account.settings["hyrax_orcid_settings"] = orcid_settings
@@ -61,21 +61,22 @@ module Hyrax
           account.save
         end
 
-        def extract_doi_for_hyku(account)
+        def extract_doi_for_hyku(data, account)
           existing_doi = Array.wrap(account.settings["doi_list"])
-          new_doi = data&.dig("settings")&.dig("doi_list")&.split(" ").presence || []
+          new_doi = data&.dig("settings", "doi_list")&.split(" ").presence || []
           existing_doi | new_doi
         end
 
-        def extract_orcid_for_hyku(account)
+        def extract_orcid_for_hyku(data, account)
           existing_orcid = Array.wrap(account.settings["orcid_list"])
-          existing_orcid = existing_orcid.blank? ? config.query_class.constantize.new.synced_orcid_identity : []
-          new_orcid = data&.dig("settings")&.dig("orcid_list")&.split(" ").presence || []
-          existing_orcid | new_orcid
+          sync_orcid = existing_orcid.blank? ? config.query_class.constantize.new(account).synced_orcid_identity : []
+
+          new_orcid = data&.dig("settings", "orcid_list")&.split(" ").presence || []
+          existing_orcid | new_orcid | sync_orcid
         end
 
         def hyku_set_hyrax_orcid_settings(data, account)
-          hash = data&.dig("settings")&.dig("hyrax_orcid_settings")&.symbolize_keys&.presence || {}
+          hash = data&.dig("settings", "hyrax_orcid_settings")&.symbolize_keys&.presence || {}
           account.settings["hyrax_orcid_settings"].merge(hash)
         end
 
@@ -83,16 +84,16 @@ module Hyrax
           existing_orcid = config.redis_storage_class.constantize.new.get_array("orcid_list")
           existing_orcid = existing_orcid.blank? ? config.query_class.constantize.new.synced_orcid_identity : []
 
-          orcid_id = data&.dig("settings")&.dig("orcid_list")&.split(" ").presence || []
+          orcid_id = data&.dig("settings", "orcid_list")&.split(" ").presence || []
 
           existing_orcid | orcid_id
         end
 
         def save_to_redis(data)
-          new_doi = data&.dig("settings")&.dig("doi_list")&.split(" ").presence || []
+          new_doi = data&.dig("settings", "doi_list")&.split(" ").presence || []
           new_orcid = new_orcid
 
-          hyrax_orcid_settings = data&.dig("settings")&.dig("hyrax_orcid_settings").presence || {}
+          hyrax_orcid_settings = data&.dig("settings", "hyrax_orcid_settings").presence || {}
 
           config.redis_storage_class.constantize.new(doi_list: new_doi, orcid_list: new_orcid, hyrax_orcid_settings: hyrax_orcid_settings).save
         end

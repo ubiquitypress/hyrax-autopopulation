@@ -2,7 +2,11 @@
 module Hyrax
   module Autopopulation
     module ApplicationHelper
-      include Hyrax::HyraxHelperBehavior
+      # rubocop:disable Style/IfUnlessModifier
+      unless Object.const_defined?(:HykuAddons) || Object.const_defined?(:HykuAddons)
+        include Hyrax::HyraxHelperBehavior
+      end
+      # rubocop:enable Style/IfUnlessModifier
     end
   end
 end
