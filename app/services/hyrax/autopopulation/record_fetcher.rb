@@ -13,7 +13,7 @@ module Hyrax
       def orcid_from_db
         if config.storage_type == "redis"
           config.redis_storage_class.constantize.new.get_array("orcid_list")
-        elsif config_storage_type == "activerecord" && Object.const_defined?(:Account)
+        elsif config.storage_type == "activerecord" && Object.const_defined?(:Account)
           account.settings.dig("orcid_list")
         end
       end
@@ -22,7 +22,7 @@ module Hyrax
       def fetch_doi_list
         if config.storage_type == "redis"
           config.redis_storage_class.constantize.new.get_array("doi_list")
-        elsif config_storage_type == "activerecord" && Object.const_defined?(:Account)
+        elsif config.storage_type == "activerecord" && Object.const_defined?(:Account)
           account.settings.dig("doi_list")
         end
       end

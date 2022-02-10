@@ -39,10 +39,10 @@ module Hyrax
       def self.dynamically_include_mixins
         ::Bolognese::Metadata.prepend ::Bolognese::Writers::HyraxWorkActorAttributes
 
-        if Object.const_defined?(:HykuAddons)
-          ::HykuAddons::WorkBase.include(Hyrax::Autopopulation::AutopopulationProperty)
-          ::HykuAddons::Schema::WorkBase.include(Hyrax::Autopopulation::AutopopulationProperty)
-          ::HykuAddons::SolrDocumentBehavior.include(Hyrax::Autopopulation::SolrDocumentBehavior)
+        if config.hyrax_autopopulation.app_name == "hyku_addons"
+          ::HykuAddons::WorkBase.module_eval { include ::Hyrax::Autopopulation::AutopopulationProperty }
+          ::HykuAddons::Schema::WorkBase.module_eval { ::Hyrax::Autopopulation::AutopopulationProperty }
+          ::HykuAddons::SolrDocumentBehavior.module_eval { include ::Hyrax::Autopopulation::SolrDocumentBehavior }
         else
           ::Hyrax::BasicMetadata.include(Hyrax::Autopopulation::AutopopulationProperty)
           ::Hyrax::BasicMetadata.include(Hyrax::Autopopulation::DoiProperty)

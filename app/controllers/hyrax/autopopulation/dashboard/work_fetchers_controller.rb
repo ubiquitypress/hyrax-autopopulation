@@ -5,8 +5,8 @@ module Hyrax
     module Dashboard
       class WorkFetchersController < ApplicationController
         before_action :ensure_authorized!
-        # include ::Hyrax::ThemedLayoutController
-        # with_themed_layout "dashboard"
+        include ::Hyrax::ThemedLayoutController
+        with_themed_layout "dashboard"
 
         def index
           add_breadcrumb t("hyrax.controls.home"), ::Hyrax::Engine.routes.url_helpers.root_path
@@ -60,7 +60,7 @@ module Hyrax
         # PUT request
         # defined in config as ::Hyrax::Autopopulation::RecordPersistence
         def approve_all
-          args = pass_arguments_by_storage_type(["all", current_user])
+          args = pass_arguments_by_storage_type(["all", current_user, []])
           config_object.approval_job.constantize.perform_later(*args)
 
           flash[:notice] = I18n.t("hyrax.autopopulation.persistence.approve")

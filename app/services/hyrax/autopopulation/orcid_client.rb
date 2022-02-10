@@ -72,7 +72,7 @@ module Hyrax
         end
 
         def orcid_from_db
-          config.query_class.constantize.new.orcid_from_db
+          config.query_class.constantize.new(account).orcid_from_db
         end
 
         def fetch_works_with_auth
