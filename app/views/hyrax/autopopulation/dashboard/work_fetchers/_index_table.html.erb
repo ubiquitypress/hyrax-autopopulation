@@ -23,7 +23,7 @@
         </td>
 
         <td>
-          <% if Rails.application.config.hyrax_autopopulation.storage_type == "activerecord" %>
+          <% if Rails.application.config.hyrax_autopopulation.active_record? %>
             <%= document.creator_display.try(:to_sentence)  %>
           <% else %>
             <%= document.creator.try(:to_sentence) %>

@@ -3,6 +3,7 @@
     <div class="col-md-3">
       <ul class="navbar navbar-default navbar-fixed-side">
         <li class="active"><a href="#sources" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.sources") %></a></li>
+        <li><a href="#previously-added-id" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.previously_added_id") %></a></li>
       </ul>
     </div>
 
@@ -10,14 +11,28 @@
       <div class="tab-content">
         <div id="sources" class="tab-pane active">
           <div class="panel panel-default labels">
-            <% if Rails.application.config.hyrax_autopopulation.storage_type == "redis" %>
-              <%= render "hyrax_autopopulation_settings_form" %>
+            <% if Rails.application.config.hyrax_autopopulation.active_record? %>
+              <%= render "hyku_autopopulation_settings_form" %>  
             <% else %>
-              <%= render "hyku_autopopulation_settings_form" %>
+              <%= render "hyrax_autopopulation_settings_form" %>
             <% end %>
           </div>
         </div>
-       </div>
+
+        <div id="previously-added-id" class="tab-pane">
+          <div class="panel panel-default labels">
+            <div class="panel-body">
+              <p class="text-primary text-center"> <%= t("hyrax.autopopulation.saved_orcids") %> </p>
+              <%= saved_orcids.join(", ") %>
+            </div>
+
+            <div class="panel-body">
+              <p class="text-primary text-center"> <%= t("hyrax.autopopulation.saved_doi") %> </p>
+              <%= saved_doi.join(", ") %>
+            </div>
+          </div>
+        </div>
+       </div> <!-- .tab-content -->
     </div>
   </div>
 </div>

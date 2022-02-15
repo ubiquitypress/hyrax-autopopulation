@@ -3,7 +3,15 @@
 module Hyrax
   module Autopopulation
     class RecordPersistence
-      attr_accessor :data, :account
+      include Hyrax::Autopopulation::ParseIdentifier
+
+      attr_accessor :data, :account, :works
+
+      def initialize(account: nil, data: nil, works: nil)
+        @account = account
+        @data = data
+        @works = works
+      end
 
       # A wrapper that allows saving to Redis when using Hyrax & to  Activerecord for Hyku
       # data is hash that has
@@ -16,11 +24,11 @@ module Hyrax
       #                    "hyrax_orcid_settings" => { } }
       # }
       #
-      def save(data, account = nil)
+      def save
         if account.present?
-          save_to_postgres(data, account)
+          save_to_postgres
         else
-          save_to_redis(data)
+          save_to_redis
         end
       end
 
@@ -32,8 +40,8 @@ module Hyrax
       #
       # [<GenericWork>, <Article>]
       #
-      def approved_works(works, account = nil)
-        AccountElevator.switch!(account.cname) if config.storage_type == "activerecord"
+      def approved_works
+        AccountElevator.switch!(account.cname) if config.active_record?
         works&.compact&.each do |work|
           work&.file_sets&.first&.update(visibility: "open")
           work.update(autopopulation_status: "approved", visibility: "open")
@@ -46,14 +54,14 @@ module Hyrax
           Rails.application.config.hyrax_autopopulation
         end
 
-        def save_to_postgres(data, account)
+        def save_to_postgres
           return unless account.present?
 
           AccountElevator.switch!(account.cname)
 
-          doi_list = extract_doi_for_hyku(data, account)
-          orcid_list = extract_orcid_for_hyku(data, account)
-          orcid_settings = hyku_set_hyrax_orcid_settings(data, account)
+          doi_list = extract_doi_for_hyku
+          orcid_list = extract_orcid_for_hyku
+          orcid_settings = hyku_set_hyrax_orcid_settings
 
           account.settings["hyrax_orcid_settings"] = orcid_settings
           account.settings.merge!("doi_list" => doi_list, "orcid_list" => orcid_list)
@@ -61,22 +69,31 @@ module Hyrax
           account.save
         end
 
-        def extract_doi_for_hyku(data, account)
-          existing_doi = Array.wrap(account.settings["doi_list"])
-          new_doi = data&.dig("settings", "doi_list")&.split(" ").presence || []
-          existing_doi | new_doi
+        # eg data a hash and key a string must be doi_list or orcid_list
+        def split_string(key)
+          str = data&.dig("settings", key)
+          str&.strip&.gsub("\\n", " ")&.split(/[,\s]+/)
         end
 
-        def extract_orcid_for_hyku(data, account)
+        def extract_doi_for_hyku
+          existing_doi = Array.wrap(account.settings["doi_list"])
+          new_doi = split_string("doi_list")&.presence || []
+          doi_ids = remove_url_from_ids(new_doi)
+
+          existing_doi | doi_ids
+        end
+
+        def extract_orcid_for_hyku
           existing_orcid = Array.wrap(account.settings["orcid_list"])
           sync_orcid = existing_orcid.blank? ? config.query_class.constantize.new(account).synced_orcid_identity : []
+          new_orcid = split_string("orcid_list")&.presence || []
+          orcid_ids = remove_url_from_ids(new_orcid)
 
-          new_orcid = data&.dig("settings", "orcid_list")&.split(" ").presence || []
-          existing_orcid | new_orcid | sync_orcid
+          existing_orcid | orcid_ids | sync_orcid
         end
 
-        def hyku_set_hyrax_orcid_settings(data, account)
-          hash = data&.dig("settings", "hyrax_orcid_settings")&.symbolize_keys&.presence || {}
+        def hyku_set_hyrax_orcid_settings
+          hash = data&.dig("settings", "hyrax_orcid_settings")&.presence || {}
           account.settings["hyrax_orcid_settings"].merge(hash)
         end
 
@@ -84,18 +101,21 @@ module Hyrax
           existing_orcid = config.redis_storage_class.constantize.new.get_array("orcid_list")
           existing_orcid = existing_orcid.blank? ? config.query_class.constantize.new.synced_orcid_identity : []
 
-          orcid_id = data&.dig("settings", "orcid_list")&.split(" ").presence || []
+          new_orcid = split_string("orcid_list").presence || []
 
-          existing_orcid | orcid_id
+          existing_orcid | new_orcid
         end
 
-        def save_to_redis(data)
-          new_doi = data&.dig("settings", "doi_list")&.split(" ").presence || []
-          new_orcid = new_orcid
+        def save_to_redis
+          new_doi = split_string("doi_list")&.presence || []
+          doi_ids = remove_url_from_ids(new_doi)
+
+          new_orcid = orcid_for_hyrax_app
+          orcid_ids = remove_url_from_ids(new_orcid)
 
           hyrax_orcid_settings = data&.dig("settings", "hyrax_orcid_settings").presence || {}
 
-          config.redis_storage_class.constantize.new(doi_list: new_doi, orcid_list: new_orcid, hyrax_orcid_settings: hyrax_orcid_settings).save
+          config.redis_storage_class.constantize.new(doi_list: doi_ids, orcid_list: orcid_ids, hyrax_orcid_settings: hyrax_orcid_settings).save
         end
     end
   end

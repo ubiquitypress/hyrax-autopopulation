@@ -15,9 +15,16 @@ module Hyrax
 
       # returns an array of doi extracted from the works in orcid
       # example %w[10.1038/srep15737 10.1038/nature12373 10.1117/12.2004063]
+      #
       def fetch_doi_list
         fetch_and_store_access_token unless check_token_presence?
-        extract_doi.presence || []
+
+        doi_list = extract_doi.presence || []
+
+        doi_hash = { "settings" => { "doi_list" => doi_list&.join(" ") } }
+        Hyrax::Autopopulation::PersistIdentifierJob.perform_later(data: doi_hash, account: account) if doi_list.present?
+
+        doi_list
       end
 
       private
@@ -30,20 +37,20 @@ module Hyrax
 
         def check_token_presence?
           token_in_redis = config.redis_storage_class.constantize.new.get_hash("hyrax_orcid_settings")&.dig("access_token")
-          token_in_postgres = config.storage_type == "activerecord" && account.settings&.dig("hyrax_orcid_settings", "access_token")
+          token_in_postgres = config.active_record? && account.settings&.dig("hyrax_orcid_settings", "access_token")
           (token_in_redis || token_in_postgres).present? ? true : false
         end
 
         def client_credentials
-          if config.storage_type == "redis"
+          if config.active_record?
             {
-              client_id: ENV["ORCID_CLIENT_ID"], client_secret: ENV["ORCID_CLIENT_SECRET"],
+              client_id: account.settings&.dig("hyrax_orcid_settings", "client_id"),
+              client_secret: account.settings&.dig("hyrax_orcid_settings", "client_secret"),
               grant_type: "client_credentials", scope: "/read-public"
             }
           else
             {
-              client_id: account.settings&.dig("hyrax_orcid_settings")&.dig(:client_id),
-              client_secret: account.settings&.dig("hyrax_orcid_settings")&.dig(:client_secret),
+              client_id: ENV["ORCID_CLIENT_ID"], client_secret: ENV["ORCID_CLIENT_SECRET"],
               grant_type: "client_credentials", scope: "/read-public"
             }
           end
@@ -51,10 +58,10 @@ module Hyrax
 
         # use values from pesisatence
         def headers
-          token = if config.storage_type == "redis"
-                    config.redis_storage_class.constantize.new.get_hash("hyrax_orcid_settings")&.dig("access_token")
+          token = if config.active_record?
+                    account.settings&.dig("hyrax_orcid_settings", "access_token")
                   else
-                    account.settings&.dig("hyrax_orcid_settings")&.dig(:access_token)
+                    config.redis_storage_class.constantize.new.get_hash("hyrax_orcid_settings", "access_token")
                   end
 
           { "authorization" => "Bearer #{token}", "Content-Type" => "application/json" }
@@ -68,7 +75,7 @@ module Hyrax
           hash = JSON.parse(response.body)
           data = { "settings" => { "hyrax_orcid_settings" => hash } }
 
-          config.persistence_class.constantize.new.save(data, account)
+          config.persistence_class.constantize.new(data: data, account: account).save
         end
 
         def orcid_from_db

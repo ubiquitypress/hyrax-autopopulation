@@ -11,7 +11,7 @@ module Hyrax
       # attributes = response.build_work_actor_attributes
       #
       def initialize(attributes, user, account = nil)
-        AccountElevator.switch!(account&.cname) if Rails.application.config.hyrax_autopopulation.storage_type == "activerecord"
+        AccountElevator.switch!(account&.cname) if Rails.application.config.hyrax_autopopulation.active_record?
 
         @account = account
         @user = user
@@ -36,14 +36,16 @@ module Hyrax
         end
 
         def actor_environment
-          if Rails.application.config.hyrax_autopopulation.storage_type == "redis"
-            # Remove fields not defined by Hyrax
-            keys = %i[date_published editor]
-            new_attributes = attributes.except(*keys)
-            @_actor_environemnt ||= Hyrax::Actors::Environment.new(GenericWork.new, ::Ability.new(user), new_attributes)
-          else
-            @_actor_environemnt ||= Hyrax::Actors::Environment.new(GenericWork.new, ::Ability.new(user), attributes)
-          end
+          klass = Hyrax::Actors::Environment
+
+          @_actor_environment ||= if Rails.application.config.hyrax_autopopulation.active_record?
+                                    klass.new(GenericWork.new, ::Ability.new(user), attributes)
+                                  else
+                                    # Remove fields not defined by Hyrax
+                                    keys = %i[date_published editor]
+                                    new_attributes = attributes.except(*keys)
+                                    klass.new(GenericWork.new, ::Ability.new(user), new_attributes)
+                                  end
         end
 
         def uploaded_file
