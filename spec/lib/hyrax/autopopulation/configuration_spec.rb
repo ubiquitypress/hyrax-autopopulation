@@ -30,6 +30,10 @@ RSpec.describe Hyrax::Autopopulation::Configuration do
     it "returns :autopopulated_imported_work_status" do
       expect(config.autopopulation_imported_work_status).to eq(autopopulation_imported_work_status)
     end
+
+    it "checks if active_record is storage_type" do
+      expect(config.active_record?).to be_falsey
+    end
   end
 
   context "can be customised" do

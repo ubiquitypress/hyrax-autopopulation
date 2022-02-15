@@ -6,7 +6,7 @@ module Hyrax
       attr_accessor :user, :account, :save_metadata_klass, :fetch_doi_klass
 
       def initialize(fetch_doi_klass:, save_metadata_klass: nil, user:, account: nil)
-        AccountElevator.switch!(account.cname) if config.storage_type == "activerecord"
+        AccountElevator.switch!(account.cname) if config.active_record?
 
         @user = user
         @account = account

@@ -5,8 +5,16 @@ en:
         sidebar:
           autopopulations: Autopopulation
       preference: Autopopulation Preference
-      sources: Autopopulation Sources
+      sources: Autopopulation Form
+      previously_added_id: Previously Added IDs
       page_header: Autopopulate Works
+      saved_orcids: ORCiD IDs
+      saved_doi: DOIs
+      notification:
+        subject: autopopulation - Import completed
+        body: work autopopulation
+        approval_subject: Completed approval autopopulation of works
+        approval_body: Autopopulated work approved
       tabs:
         draft: Draft Imports
         approved: Approved Imports

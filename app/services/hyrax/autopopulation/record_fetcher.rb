@@ -6,24 +6,24 @@ module Hyrax
       attr_accessor :account
 
       def initialize(account = nil)
-        AccountElevator.switch!(account.cname) if config.storage_type == "activerecord"
+        AccountElevator.switch!(account.cname) if config.active_record?
         @account = account
       end
 
       def orcid_from_db
-        if config.storage_type == "redis"
-          config.redis_storage_class.constantize.new.get_array("orcid_list")
-        elsif config.storage_type == "activerecord" && Object.const_defined?(:Account)
+        if config.active_record? && Object.const_defined?(:Account)
           account.settings.dig("orcid_list")
+        else
+          config.redis_storage_class.constantize.new.get_array("orcid_list")
         end
       end
 
       # Calls out to ::Hyrax::Autopopulation::RedisStorage.new.get_array("doi_list")
       def fetch_doi_list
-        if config.storage_type == "redis"
-          config.redis_storage_class.constantize.new.get_array("doi_list")
-        elsif config.storage_type == "activerecord" && Object.const_defined?(:Account)
+        if config.active_record? && Object.const_defined?(:Account)
           account.settings.dig("doi_list")
+        else
+          config.redis_storage_class.constantize.new.get_array("doi_list")
         end
       end
 

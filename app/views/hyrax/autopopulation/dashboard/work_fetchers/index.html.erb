@@ -19,10 +19,10 @@
   <div class="col-md-12">
     <div class="panel panel-default tabs">
       <ul class="nav nav-tabs" role="tablist">
-        <li>
+        <li class="active">
           <a href="#autopopulation-settings" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.tabs.settings") %></a>
         </li>
-        <li class="active">
+        <li>
           <a href="#draft-import" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.tabs.draft") %></a>
         </li>
         <li>
@@ -31,7 +31,7 @@
       </ul>
 
       <div class="tab-content">
-        <div id="draft-import" class="tab-pane active">
+        <div id="draft-import" class="tab-pane">
           <div class="panel panel-default labels">
             <div class="panel-body">
               <%= form_tag hyrax_autopopulation.approve_all_work_fetchers_path, method: :put do  %>
@@ -47,36 +47,32 @@
                     <%= submit_tag "Approve Selected", class: "btn btn-primary pull-right" %>
                   <% end %>
                 <% end %>
-            </div> 
+              </div> 
+            </div>
           </div>
-        </div>
-      </div> <!-- closes .tab-content -->
+        </div> 
 
-      <div id="approved-import" class="tab-pane">
-        <div class="panel panel-default labels">
-          <div class="panel-body">
-            <%= render "index_table", works: @approved_works %>
+        <div id="approved-import" class="tab-pane">
+          <div class="panel panel-default labels">
+            <div class="panel-body">
+              <%= render "index_table", works: @approved_works %>
             <div>
           </div>
         </div>
-      </div>
-      
-    </div> 
+      </div> 
+      </div> 
           
-      <div id="autopopulation-settings" class="tab-pane">
-        <div class="panel panel-default labels">
-          <div class="panel-body">
-            <div class="table-responsive">
-              <%= render "settings_form", account: @account %>
-            </div>
-          <div>
-        </div>
+      <div id="autopopulation-settings" class="tab-pane active">
+       <div class="panel panel-default labels">
+        <div class="panel-body">
+          <div class="table-responsive">
+            <%= render "settings_form", account: @account, saved_orcids: @saved_orcids, saved_doi: @saved_doi  %>
+          </div>
+        <div>
       </div>
-
-      </div>
-     </div>
-    </div>
-    </div> <!-- .panel-default tabs -->
-  </div>
-</div>
+    </div> <!-- close #autopopulation-settings -->  
+   </div> <!-- closes .tab-content -->
+  </div> <!-- .panel-default tabs -->
+ </div>
+</div> <!-- .row -->
   

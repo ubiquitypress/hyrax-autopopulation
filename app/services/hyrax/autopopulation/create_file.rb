@@ -8,7 +8,7 @@ module Hyrax
       # params :url is the remote file localtion from unpaywall response
       #
       def initialize(url, user, account = nil)
-        AccountElevator.switch!(account.cname) if Rails.application.config.hyrax_autopopulation.storage_type == "activerecord"
+        AccountElevator.switch!(account.cname) if Rails.application.config.hyrax_autopopulation.active_record?
 
         @url = url&.strip
 
@@ -21,7 +21,7 @@ module Hyrax
 
       def save
         file_io = file_io_object
-        Hyrax::UploadedFile.where(file: filename)&.first&.presence || Hyrax::UploadedFile.create(file: file_io, user: user)
+        Hyrax::UploadedFile.create(file: file_io, user: user)
       end
 
       private

@@ -15,17 +15,24 @@ module Hyrax
           # The config object sets Hyrax::Autopopulation::ImportedWorkStatusService
           @approved_works = config_object.imported_work_status_service.constantize.new("approved")
           @draft_works = config_object.imported_work_status_service.constantize.new("draft")
+
+          fetch_saved_ids
         end
 
         # POST / PATCH requets
+        # save the extracted dois to db
+        # doi_list sent to the job are id seperated by space or new line \n
+        # example
+        # 10.1016/j.crvasa.2015.05.007 10.1016/j.crvasa.2015.05.008
+        #
         # Uses Hyrax::Autopopulation::RecordPersistence class via the config object
         # Note * splits a array into multiple arguments
         # example of the value returned by args
-        # [autopopulation_settings_params, current_account]
+        # {data: autopopulation_settings_params, account: current_account}
         #
         def settings
-          args = pass_arguments_by_storage_type([autopopulation_settings_params])
-          config_object.persistence_class.constantize.new.save(*args)
+          args = pass_arguments_by_storage_type(data: autopopulation_settings_params)
+          config_object.persistence_class.constantize.new(**args).save
 
           flash[:notice] = I18n.t("hyrax.autopopulation.persistence.success_saving_orcid_doi")
           redirect_to hyrax_autopopulation.work_fetchers_path
@@ -44,7 +51,7 @@ module Hyrax
           config_object.work_fetcher_job.constantize.perform_later(args)
 
           flash[:notice] = I18n.t("hyrax.autopopulation.persistence.doi_fetch")
-          redirect_to hyrax_autopopulation.work_fetchers_path
+          redirect_to hyrax_autopopulation.work_fetchers_path(anchor: "draft-import")
         end
 
         # POST request
@@ -54,7 +61,7 @@ module Hyrax
           config_object.work_fetcher_job.constantize.perform_later(args)
 
           flash[:notice] = I18n.t("hyrax.autopopulation.persistence.orcid_fetch")
-          redirect_to hyrax_autopopulation.work_fetchers_path
+          redirect_to hyrax_autopopulation.work_fetchers_path(anchor: "draft-import")
         end
 
         # PUT request
@@ -64,7 +71,7 @@ module Hyrax
           config_object.approval_job.constantize.perform_later(*args)
 
           flash[:notice] = I18n.t("hyrax.autopopulation.persistence.approve")
-          redirect_to hyrax_autopopulation.work_fetchers_path
+          redirect_to hyrax_autopopulation.work_fetchers_path(anchor: "approved-import")
         end
 
         # PUT request
@@ -78,16 +85,18 @@ module Hyrax
           config_object.approval_job.constantize.perform_later(*args)
 
           flash[:notice] = I18n.t("hyrax.autopopulation.persistence.approve")
-          redirect_to hyrax_autopopulation.work_fetchers_path
+          redirect_to hyrax_autopopulation.work_fetchers_path(anchor: "approved-import")
         end
 
         private
 
           def autopopulation_settings_params
-            if config_object.storage_type == "redis"
-              params.permit(settings: %i[doi_list orcid_list work_ids id])
+            keys = %i[doi_list orcid_list work_ids id]
+
+            if config_object.active_record?
+              params.require(:account).permit(settings: keys)
             else
-              params.require(:account).permit(settings: %i[doi_list orcid_list work_ids id])
+              params.permit(settings: keys)
             end
           end
 
@@ -109,11 +118,17 @@ module Hyrax
           #   {user: current_user}
           #
           def pass_arguments_by_storage_type(value)
-            if config_object.storage_type == "activerecord"
+            if config_object.active_record?
               value.is_a?(Hash) ? value.merge!(account: current_account) : (Array(value) << current_account)
             else
               value
             end
+          end
+
+          def fetch_saved_ids
+            args = pass_arguments_by_storage_type([])
+            @saved_orcids = config_object.query_class.constantize.new(*args).orcid_from_db
+            @saved_doi = config_object.query_class.constantize.new(*args).fetch_doi_list
           end
       end
     end

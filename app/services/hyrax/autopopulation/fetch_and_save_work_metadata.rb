@@ -3,6 +3,8 @@
 module Hyrax
   module Autopopulation
     class FetchAndSaveWorkMetadata
+      include Hyrax::Autopopulation::ParseIdentifier
+
       attr_accessor :user, :account, :doi_list
 
       def initialize(user:, doi_list:, account: nil)
@@ -13,7 +15,7 @@ module Hyrax
 
       def save
         doi_list&.compact&.each do |doi|
-          next if doi.nil? || check_for_work_doi(doi).positive?
+          next if doi.nil? || check_for_work_doi(doi)&.positive?
 
           fetch_and_create_work_with_doi(doi)
         end
@@ -37,16 +39,19 @@ module Hyrax
         end
 
         def check_for_work_doi(doi)
-          ActiveFedora::SolrService.count("doi_ssi: #{doi}", rows: 1)
+          new_doi = slice_out_id_from_url(doi)
+
+          return unless new_doi.present?
+
+          ActiveFedora::SolrService.count("doi_ssi: #{new_doi}", rows: 1)
         end
 
         def fetch_crossref_work_data(doi)
-          response = config.crossref_bolognese_client.constantize.new(input: doi)
-          response.build_work_actor_attributes
+          config.crossref_bolognese_client.constantize.new(input: doi)&.build_work_actor_attributes
         end
 
         def autopopulation_complete_notification
-          user.send_message(user, "autopopulation - Import completed", "work autopopulation")
+          user.send_message(user, I18n.t("hyrax.autopopulation.notification.subject"), I18n.t("hyrax.autopopulation.notification.body"))
         end
 
         def config

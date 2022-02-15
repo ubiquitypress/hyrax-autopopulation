@@ -17,14 +17,14 @@ module Hyrax
                   config.query_class.constantize.new(account).fetch_by_ids(work_ids)
                 end
 
-        config.persistence_class.constantize.new.approved_works(works, account)
+        config.persistence_class.constantize.new(works: works, account: account).approved_works
         autopopulation_complete_notification(user)
       end
 
       private
 
         def autopopulation_complete_notification(user)
-          user.send_message(user, "Completed approval autopopulation of works", "Autopopulated work approved")
+          user.send_message(user, I18n.t("hyrax.autopopulation.notification.approval_subject"), I18n.t("hyrax.autopopulation.notification.approval_body"))
         end
     end
   end

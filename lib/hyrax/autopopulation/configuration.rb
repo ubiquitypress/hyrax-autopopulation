@@ -37,6 +37,10 @@ module Hyrax
       config_accessor(:approval_job) { "Hyrax::Autopopulation::ApprovalJob" }
       config_accessor(:fetch_and_save_work_metadata) { "Hyrax::Autopopulation::FetchAndSaveWorkMetadata" }
       config_accessor(:app_name) { "hyrax" }
+
+      def active_record?
+        storage_type == "activerecord"
+      end
     end
   end
 end
