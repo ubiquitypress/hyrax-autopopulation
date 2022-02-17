@@ -15,7 +15,7 @@ module Hyrax
 
       def save
         doi_list&.compact&.each do |doi|
-          next if doi.nil? || check_for_work_doi(doi)&.positive?
+          next if doi.nil? || check_for_work_doi(doi)&.positive? || rejected_dois.include?(doi)
 
           fetch_and_create_work_with_doi(doi)
         end
@@ -48,6 +48,10 @@ module Hyrax
 
         def fetch_crossref_work_data(doi)
           config.crossref_bolognese_client.constantize.new(input: doi)&.build_work_actor_attributes
+        end
+
+        def rejected_dois
+          config.query_class.constantize.new(account).fetch_rejected_doi
         end
 
         def autopopulation_complete_notification
