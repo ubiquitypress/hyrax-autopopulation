@@ -61,7 +61,7 @@ module Hyrax
           token = if config.active_record?
                     account.settings&.dig("hyrax_orcid_settings", "access_token")
                   else
-                    config.redis_storage_class.constantize.new.get_hash("hyrax_orcid_settings", "access_token")
+                    config.redis_storage_class.constantize.new.get_hash("hyrax_orcid_settings")&.dig("access_token")
                   end
 
           { "authorization" => "Bearer #{token}", "Content-Type" => "application/json" }

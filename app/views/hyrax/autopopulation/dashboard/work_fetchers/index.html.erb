@@ -39,14 +39,25 @@
                   <%= submit_tag "Approve All", class: "btn btn-primary pull-right" %>  &nbsp;&nbsp;
                 <% end %>
               <% end %>
+              
+              <span> &#160; </span>
 
               <div class="table-responsive">
                 <%= form_tag hyrax_autopopulation.approve_multiple_work_fetchers_path, method: :put do  %>
-                  <%= render "index_table", works: @draft_works %>
-                  <% if @draft_works.present? %> 
-                    <%= submit_tag "Approve Selected", class: "btn btn-primary pull-right" %>
-                  <% end %>
+                   <%= render "index_table", works: @draft_works %>
+
+                    <% if @draft_works.present? %>
+                      <div class="pull-right">
+                        <%= submit_tag "Approve Selected", class: "btn btn-primary", 
+                        data: { confirm: t("hyrax.autopopulation.approve_work_confirmation") } %>
+                        
+                      <%= submit_tag "Reject & delete", formaction: hyrax_autopopulation.reject_multiple_work_fetchers_path,
+                            data: { confirm: t("hyrax.autopopulation.reject_work_confirmation") }, class: "btn btn-danger" %>
+                      </div>
+                    <% end %>
+
                 <% end %>
+              
               </div> 
             </div>
           </div>
@@ -66,7 +77,7 @@
        <div class="panel panel-default labels">
         <div class="panel-body">
           <div class="table-responsive">
-            <%= render "settings_form", account: @account, saved_orcids: @saved_orcids, saved_doi: @saved_doi  %>
+            <%= render "settings_page", account: @account, saved_orcids: @saved_orcids, saved_doi: @saved_doi, rejected_doi: @rejected_doi  %>
           </div>
         <div>
       </div>

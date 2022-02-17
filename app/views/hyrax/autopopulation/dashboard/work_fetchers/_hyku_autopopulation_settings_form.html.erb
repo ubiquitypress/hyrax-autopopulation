@@ -2,11 +2,12 @@
   <div class="panel-body">
     <div class="form-group">
       <%=f.fields_for :settings do |ff| %>
-        <%= ff.label :orcid_ids_for_autopopulation %><br>
-        <%= ff.text_area :orcid_list, value: current_account.settings.dig("autopopulation", "orcid_list"), class: "form-control", id: "doi_autopopulation_settings" %><br>
+        <%= ff.label t("hyrax.autopopulation.form_doi_label") %><br>
+        <%= ff.text_area :doi_list, value: current_account.settings.dig("autopopulation", "doi_list"), class: "form-control", id: "doi_autopopulation_settings" %><br>
         <br/>
-        <%= ff.label :doi_for_autopopulation %><br>
-        <%= ff.text_area :doi_list, value: current_account.settings.dig("autopopulation", "doi_list"), class: "form-control", id: "orcids_autopopulation_settings" %><br>
+        <%= ff.label t("hyrax.autopopulation.form_orcid_label") %><br>
+        <%= ff.text_area :orcid_list, value: current_account.settings.dig("autopopulation", "orcid_list"), class: "form-control", id: "orcid_autopopulation_settings" %><br>
+     
       <% end %>
     </div>
   </div>

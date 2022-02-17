@@ -35,6 +35,7 @@ module Hyrax
       config_accessor(:create_file_class) { "Hyrax::Autopopulation::CreateFile" }
       config_accessor(:work_fetcher_job) { "Hyrax::Autopopulation::WorkFetcherJob" }
       config_accessor(:approval_job) { "Hyrax::Autopopulation::ApprovalJob" }
+      config_accessor(:rejection_job) { "Hyrax::Autopopulation::RejectionJob" }
       config_accessor(:fetch_and_save_work_metadata) { "Hyrax::Autopopulation::FetchAndSaveWorkMetadata" }
       config_accessor(:app_name) { "hyrax" }
 

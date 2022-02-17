@@ -39,6 +39,10 @@ module Hyrax
         instance.smembers(key)
       end
 
+      def remove_from_array(key, array_list)
+        instance.srem(key, array_list)
+      end
+
       # A wrapper for Redis mapped_hmset for saving hash
       # hash example
       #  {"hyrax_orcid_settings": {} }

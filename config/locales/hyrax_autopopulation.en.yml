@@ -10,11 +10,18 @@ en:
       page_header: Autopopulate Works
       saved_orcids: ORCiD IDs
       saved_doi: DOIs
+      form_doi_label: DOIs for autopopulation
+      form_orcid_label: ORCiD ids for autopopulation
+      rejected_doi: Rejected DOIs from previously imported works
+      reject_work_confirmation: This will save the DOIs to avoid re-import but delete the selected works. Deleting a work from Hyrax is permanent. Click OK to delete this work from Hyrax, or Cancel to cancel this operation
+      approve_work_confirmation: This will change the work from private to public & moved it to the approved_works tab.
       notification:
         subject: autopopulation - Import completed
         body: work autopopulation
         approval_subject: Completed approval autopopulation of works
         approval_body: Autopopulated work approved
+        rejection_subject: Completed rejection of selected autopopulation of works
+        rejection_body: Selected autopopulated work rejected but DOIs saved
       tabs:
         draft: Draft Imports
         approved: Approved Imports
@@ -26,4 +33,5 @@ en:
         success_saving_orcid_doi: The submitted ids were successfully saved
         doi_fetch: Auto-population using DOI in progress, you will a see a notification when completed
         orcid_fetch: Auto-population using ORCID in progress, you will a see a notification when completed
-        approve: Autopopulated works are being approved in the background. 
+        approve: Autopopulated works are being approved in the background.
+        reject: Selected autopopulated works will be deleted & their doi saved in the background.

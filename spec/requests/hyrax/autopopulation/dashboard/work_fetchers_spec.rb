@@ -41,6 +41,7 @@ RSpec.describe "Hyrax::Autopopulation::Dashboard::WorkFetchersController", type:
     let(:id_type) { "doi" }
     let(:fetch_doi_args) { { fetch_doi_klass: config.query_class, user: user } }
     let(:fetch_doi_from_orcid_args) { { fetch_doi_klass: config.orcid_client, user: user } }
+    let(:work) { build_stubbed(:work, title: ["work"], autopopulation_status: "draft") }
 
     context "POST /dashboard/work_fetchers/settings" do
       it "can save orcid id to redis" do
@@ -65,8 +66,6 @@ RSpec.describe "Hyrax::Autopopulation::Dashboard::WorkFetchersController", type:
     end
 
     context "approval" do
-      let(:work) { build_stubbed(:work, title: ["work"], autopopulation_status: "draft") }
-
       before do
         allow(GenericWork).to receive(:find).with(work.id.to_s).and_return(user)
       end
@@ -80,7 +79,15 @@ RSpec.describe "Hyrax::Autopopulation::Dashboard::WorkFetchersController", type:
       it "queues a job when approving all" do
         expect do
           put route_helper.approve_all_work_fetchers_path
-        end.to have_enqueued_job(config.approval_job.constantize).with("all", user).exactly(:once)
+        end.to have_enqueued_job(config.approval_job.constantize)
+      end
+    end
+
+    context "rejection" do
+      it "allows work a rejection_job to be queued" do
+        expect do
+          put route_helper.reject_multiple_work_fetchers_path, params: { "work_ids" => [work.id] }
+        end.to have_enqueued_job(config.rejection_job.constantize)
       end
     end
   end

@@ -22,13 +22,18 @@
         <div id="previously-added-id" class="tab-pane">
           <div class="panel panel-default labels">
             <div class="panel-body">
-              <p class="text-primary text-center"> <%= t("hyrax.autopopulation.saved_orcids") %> </p>
+              <p class="text-primary text-center"> <%= saved_orcids.count %> <%= t("hyrax.autopopulation.saved_orcids") %> </p>
               <%= saved_orcids.join(", ") %>
             </div>
 
             <div class="panel-body">
-              <p class="text-primary text-center"> <%= t("hyrax.autopopulation.saved_doi") %> </p>
+              <p class="text-primary text-center"> <%= saved_doi.count %> <%= t("hyrax.autopopulation.saved_doi") %> </p>
               <%= saved_doi.join(", ") %>
+            </div>
+
+            <div class="panel-body">
+              <p class="text-primary text-center"> <%= rejected_doi.count %> <%= t("hyrax.autopopulation.rejected_doi") %> </p>
+              <%= rejected_doi.join(", ") %>
             </div>
           </div>
         </div>

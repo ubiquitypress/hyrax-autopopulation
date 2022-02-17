@@ -88,6 +88,14 @@ module Hyrax
           redirect_to hyrax_autopopulation.work_fetchers_path(anchor: "approved-import")
         end
 
+        def reject_multiple
+          args = pass_arguments_by_storage_type([current_user, params["work_ids"]])
+          config_object.rejection_job.constantize.perform_later(*args)
+
+          flash[:notice] = I18n.t("hyrax.autopopulation.persistence.reject")
+          redirect_to hyrax_autopopulation.work_fetchers_path(anchor: "previously-added-id")
+        end
+
         private
 
           def autopopulation_settings_params
@@ -127,8 +135,10 @@ module Hyrax
 
           def fetch_saved_ids
             args = pass_arguments_by_storage_type([])
-            @saved_orcids = config_object.query_class.constantize.new(*args).orcid_from_db
-            @saved_doi = config_object.query_class.constantize.new(*args).fetch_doi_list
+            klass = config_object.query_class.constantize.new(*args)
+            @saved_orcids = klass.orcid_from_db
+            @saved_doi = klass.fetch_doi_list
+            @rejected_doi = klass.fetch_rejected_doi
           end
       end
     end

@@ -8,6 +8,8 @@ module Hyrax
       attr_accessor :data, :account, :works
 
       def initialize(account: nil, data: nil, works: nil)
+        AccountElevator.switch!(account.cname) if config.active_record?
+
         @account = account
         @data = data
         @works = works
@@ -41,17 +43,47 @@ module Hyrax
       # [<GenericWork>, <Article>]
       #
       def approved_works
-        AccountElevator.switch!(account.cname) if config.active_record?
         works&.compact&.each do |work|
           work&.file_sets&.first&.update(visibility: "open")
           work.update(autopopulation_status: "approved", visibility: "open")
         end
       end
 
+      def delete_rejected_works
+        works&.each do |work|
+          work.destroy
+        end
+      end
+
+      # takes doi ids of rejected works
+      def save_rejected_ids
+        doi_ids = works&.map { |work| work&.doi&.first }
+
+        return unless doi_ids.present?
+
+        save_rejected_work_ids
+        # so we can do chained method call
+        self
+      end
+
       private
 
         def config
           Rails.application.config.hyrax_autopopulation
+        end
+
+        def save_rejected_work_ids
+          if account.present?
+            existing_doi = Array.wrap(account.settings["doi_list"])
+            remaining_ids = existing_doi - doi_ids
+            account.settings["doi_list"] = remaining_ids
+            account.settings["rejected_doi_list"] = doi_ids
+            account.save
+          else
+            # remove rejected ids from ids used for fetching works netatdata
+            config.redis_storage_class.constantize.new.remove_from_array("doi_list", doi_ids)
+            config.redis_storage_class.constantize.new.set_array("rejected_doi_list", doi_ids)
+          end
         end
 
         def save_to_postgres

@@ -9,6 +9,7 @@ Hyrax::Autopopulation::Engine.routes.draw do
         post :fetch_with_orcid
         put :approve_multiple
         put :approve_all
+        put :reject_multiple
       end
     end
   end

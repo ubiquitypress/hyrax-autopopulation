@@ -11,20 +11,16 @@ module Hyrax
       end
 
       def orcid_from_db
-        if config.active_record? && Object.const_defined?(:Account)
-          account.settings.dig("orcid_list")
-        else
-          config.redis_storage_class.constantize.new.get_array("orcid_list")
-        end
+        fetch_by("orcid_list")&.presence || []
       end
 
       # Calls out to ::Hyrax::Autopopulation::RedisStorage.new.get_array("doi_list")
       def fetch_doi_list
-        if config.active_record? && Object.const_defined?(:Account)
-          account.settings.dig("doi_list")
-        else
-          config.redis_storage_class.constantize.new.get_array("doi_list")
-        end
+        fetch_by("doi_list")&.presence || []
+      end
+
+      def fetch_rejected_doi
+        fetch_by("rejected_doi_list")&.presence || []
       end
 
       # only fetch the sunced orcid id if an orcid identity_table exists?
@@ -40,6 +36,14 @@ module Hyrax
 
       def fetch_all_draft
         @fetch_all_draft ||= ActiveFedora::Base.where("autopopulation_status_tesim:draft")
+      end
+
+      def fetch_by(key)
+        if config.active_record? && Object.const_defined?(:Account)
+          account.settings.dig(key)
+        else
+          config.redis_storage_class.constantize.new.get_array(key)
+        end
       end
 
       private
