@@ -55,7 +55,9 @@ module Hyrax
         end
 
         def autopopulation_complete_notification
-          user.send_message(user, I18n.t("hyrax.autopopulation.notification.subject"), I18n.t("hyrax.autopopulation.notification.body"))
+          url_path = Hyrax::Autopopulation::Engine.routes.url_helpers.work_fetchers_path(anchor: "draft-import")
+
+          user.send_message(user, I18n.t("hyrax.autopopulation.notification.subject"), I18n.t("hyrax.autopopulation.notification.body", url: url_path))
         end
 
         def config

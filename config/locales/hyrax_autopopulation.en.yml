@@ -12,26 +12,31 @@ en:
       saved_doi: DOIs
       form_doi_label: DOIs for autopopulation
       form_orcid_label: ORCiD ids for autopopulation
-      rejected_doi: Rejected DOIs from previously imported works
+      rejected_doi: Rejected DOIs from previously autopopulated works
       reject_work_confirmation: This will save the DOIs to avoid re-import but delete the selected works. Deleting a work from Hyrax is permanent. Click OK to delete this work from Hyrax, or Cancel to cancel this operation
       approve_work_confirmation: This will change the work from private to public & moved it to the approved_works tab.
       notification:
         subject: autopopulation - Import completed
-        body: work autopopulation
-        approval_subject: Completed approval autopopulation of works
-        approval_body: Autopopulated work approved
+        body: work autopopulation - <a href= %{url} >see draft works</a>
+        approval_subject: Work autopopulation
+        approval_body: Approval completed - <a href= %{url} >see approved works</a>
         rejection_subject: Completed rejection of selected autopopulation of works
         rejection_body: Selected autopopulated work rejected but DOIs saved
       tabs:
-        draft: Draft Imports
-        approved: Approved Imports
+        draft: Draft Works
+        approved: Approved Works
         settings: Autopopulation Sources
       scan:
-        unpaywall: Scan Unpaywall Using DOI
-        orcid: PerformScan with Orcid
+        unpaywall: Scan with previously added DOI IDs
+        orcid: Scan with previously added ORCiD IDs
       persistence:
-        success_saving_orcid_doi: The submitted ids were successfully saved
-        doi_fetch: Auto-population using DOI in progress, you will a see a notification when completed
-        orcid_fetch: Auto-population using ORCID in progress, you will a see a notification when completed
-        approve: Autopopulated works are being approved in the background.
+        success_saving_orcid_doi: The IDs were added to the list of source IDs
+        doi_fetch: Auto-population using DOI is in progress, you will a see a notification when completed, and works will appear on the Draft Imports tab below, for approval
+        orcid_fetch: Auto-population using ORCID is in progress, you will a see a notification when completed, and works will appear on the Draft Imports tab below, for approval
+        approve: Approved works are being deposited, and will appear in the repository soon.
         reject: Selected autopopulated works will be deleted & their doi saved in the background.
+      hints:
+        orcid: Add multiple ORCIDs by putting each on a new line - examples 0000-0002-9079-593X 0000-0002-0787-9826
+        orcid_input_box:  0000-0002-9079-593X 0000-0002-0787-9826
+        doi: Add multiple DOIs by putting each on a new line - examples 10.1629/uksg.236 10.5678/def
+        doi_input_box: 10.1038/srep15737 10.1111/1559-8918.2019.01273

@@ -27,7 +27,8 @@ module Hyrax
       def synced_orcid_identity
         return [] unless config.is_hyrax_orcid_installed
 
-        ::OrcidIdentity.exists? && OrcidIdentity.all.map(&:orcid_id).compact
+        ids = ::OrcidIdentity.exists? && OrcidIdentity.all.map(&:orcid_id).compact
+        ids.presence || []
       end
 
       def fetch_by_ids(work_ids)

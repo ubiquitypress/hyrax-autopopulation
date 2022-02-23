@@ -24,7 +24,9 @@ module Hyrax
       private
 
         def autopopulation_complete_notification(user)
-          user.send_message(user, I18n.t("hyrax.autopopulation.notification.approval_subject"), I18n.t("hyrax.autopopulation.notification.approval_body"))
+          url_path = Hyrax::Autopopulation::Engine.routes.url_helpers.work_fetchers_path(anchor: "approved-import")
+
+          user.send_message(user, I18n.t("hyrax.autopopulation.notification.approval_subject"), I18n.t("hyrax.autopopulation.notification.approval_body", url: url_path))
         end
     end
   end

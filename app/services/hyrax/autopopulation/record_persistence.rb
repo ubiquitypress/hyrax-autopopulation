@@ -61,7 +61,7 @@ module Hyrax
 
         return unless doi_ids.present?
 
-        save_rejected_work_ids
+        save_rejected_work_ids(doi_ids)
         # so we can do chained method call
         self
       end
@@ -72,7 +72,7 @@ module Hyrax
           Rails.application.config.hyrax_autopopulation
         end
 
-        def save_rejected_work_ids
+        def save_rejected_work_ids(doi_ids)
           if account.present?
             existing_doi = Array.wrap(account.settings["doi_list"])
             remaining_ids = existing_doi - doi_ids
@@ -120,7 +120,6 @@ module Hyrax
           sync_orcid = existing_orcid.blank? ? config.query_class.constantize.new(account).synced_orcid_identity : []
           new_orcid = split_string("orcid_list")&.presence || []
           orcid_ids = remove_url_from_ids(new_orcid)
-
           existing_orcid | orcid_ids | sync_orcid
         end
 
