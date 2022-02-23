@@ -52,7 +52,6 @@ module Hyrax
           ::Hyrax::BasicMetadata.include(Hyrax::Autopopulation::DoiProperty)
           ::Hyrax::SolrDocumentBehavior.include(Hyrax::Autopopulation::SolrDocumentBehavior)
         end
-
       end
 
       # Use #to_prepare because it reloads where after_initialize only runs once
