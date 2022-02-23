@@ -22,6 +22,10 @@ module Hyrax
       # Prepend our views so they have precedence
       config.after_initialize do
         ActionController::Base.prepend_view_path(paths["app/views"].existent)
+        
+        if Object.const_defined? "Hyrax::Actors::DOIActor"
+          ::Hyrax::Actors::DOIActor.prepend(Hyrax::Autopopulation::DoiActorOverride)
+        end
       end
 
       # Allows us to access the configuration object from Rails application config
