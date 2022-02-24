@@ -13,6 +13,11 @@ module Hyrax
         g.factory_bot dir: "spec/factories"
       end
 
+      # Allow flipflop to load config/features.rb from the Hyrax gem:
+      initializer 'configure' do
+        Flipflop::FeatureLoader.current.append(self)
+      end
+
       config.before_initialize do
         Rails.application.routes.prepend do
           mount Hyrax::Autopopulation::Engine => "/"
@@ -44,14 +49,14 @@ module Hyrax
         ::Bolognese::Metadata.prepend ::Bolognese::Writers::HyraxWorkActorAttributes
 
         if config.hyrax_autopopulation.app_name == "hyku_addons"
-          ::HykuAddons::WorkBase.module_eval { include ::Hyrax::Autopopulation::AutopopulationProperty }
-          ::HykuAddons::Schema::WorkBase.module_eval { ::Hyrax::Autopopulation::AutopopulationProperty }
-          ::HykuAddons::SolrDocumentBehavior.module_eval { include ::Hyrax::Autopopulation::SolrDocumentBehavior }
+          ::HykuAddons::WorkBase.prepend(Hyrax::Autopopulation::AutopopulationProperty)
+          ::HykuAddons::Schema::WorkBase.prepend(Hyrax::Autopopulation::AutopopulationProperty)
+          ::HykuAddons::SolrDocumentBehavior.prepend(Hyrax::Autopopulation::SolrDocumentBehavior)
         else
           ::Hyrax::BasicMetadata.include(Hyrax::Autopopulation::AutopopulationProperty)
           ::Hyrax::BasicMetadata.include(Hyrax::Autopopulation::DoiProperty)
           ::Hyrax::SolrDocumentBehavior.include(Hyrax::Autopopulation::SolrDocumentBehavior)
-        end
+        end       
       end
 
       # Use #to_prepare because it reloads where after_initialize only runs once

@@ -5,6 +5,8 @@ module Hyrax
     module Dashboard
       class WorkFetchersController < ApplicationController
         before_action :ensure_authorized!
+        before_action :redirect_when_feature_is_off, only: [:index]
+
         include ::Hyrax::ThemedLayoutController
         with_themed_layout "dashboard"
 
@@ -139,6 +141,13 @@ module Hyrax
             @saved_orcids = klass.orcid_from_db
             @saved_doi = klass.fetch_doi_list
             @rejected_doi = klass.fetch_rejected_doi
+          end
+
+          def redirect_when_feature_is_off
+            unless Flipflop.enabled?(:hyrax_autopopulation)
+              flash[:notice] =  I18n.t("hyrax.autopopulation.feature_flip_msg")
+              redirect_to main_app.root_path
+            end
           end
       end
     end
