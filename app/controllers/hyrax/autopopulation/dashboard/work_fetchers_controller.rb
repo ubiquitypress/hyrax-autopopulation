@@ -53,7 +53,7 @@ module Hyrax
           config_object.work_fetcher_job.constantize.perform_later(args)
 
           flash[:notice] = I18n.t("hyrax.autopopulation.persistence.doi_fetch")
-          redirect_to hyrax_autopopulation.work_fetchers_path(anchor: "draft-import")
+          redirect_to hyrax_autopopulation.work_fetchers_path(anchor: "fetched-import")
         end
 
         # POST request
@@ -63,7 +63,7 @@ module Hyrax
           config_object.work_fetcher_job.constantize.perform_later(args)
 
           flash[:notice] = I18n.t("hyrax.autopopulation.persistence.orcid_fetch")
-          redirect_to hyrax_autopopulation.work_fetchers_path(anchor: "draft-import")
+          redirect_to hyrax_autopopulation.work_fetchers_path(anchor: "fetched-import")
         end
 
         # PUT request
@@ -144,10 +144,10 @@ module Hyrax
           end
 
           def redirect_when_feature_is_off
-            unless Flipflop.enabled?(:hyrax_autopopulation)
-              flash[:notice] =  I18n.t("hyrax.autopopulation.feature_flip_msg")
-              redirect_to main_app.root_path
-            end
+            return if Flipflop.enabled?(:hyrax_autopopulation)
+
+            flash[:notice] = I18n.t("hyrax.autopopulation.feature_flip_msg")
+            redirect_to main_app.root_path
           end
       end
     end

@@ -38,6 +38,7 @@ module Hyrax
       config_accessor(:rejection_job) { "Hyrax::Autopopulation::RejectionJob" }
       config_accessor(:fetch_and_save_work_metadata) { "Hyrax::Autopopulation::FetchAndSaveWorkMetadata" }
       config_accessor(:app_name) { "hyrax" }
+      config_accessor(:remove_non_open_access_doi_job) { "Hyrax::Autopopulation::RemoveNonOpenAccessDoiJob" }
 
       def active_record?
         storage_type == "activerecord"

@@ -23,7 +23,7 @@
           <a href="#autopopulation-settings" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.tabs.settings") %></a>
         </li>
         <li>
-          <a href="#draft-import" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.tabs.draft") %></a>
+          <a href="#fetched-import" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.tabs.draft") %></a>
         </li>
         <li>
           <a href="#approved-import" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.tabs.approved") %></a>
@@ -31,7 +31,7 @@
       </ul>
 
       <div class="tab-content">
-        <div id="draft-import" class="tab-pane">
+        <div id="fetched-import" class="tab-pane">
           <div class="panel panel-default labels">
             <div class="panel-body">
               <%= form_tag hyrax_autopopulation.approve_all_work_fetchers_path, method: :put do  %>

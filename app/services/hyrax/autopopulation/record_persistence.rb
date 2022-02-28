@@ -5,14 +5,15 @@ module Hyrax
     class RecordPersistence
       include Hyrax::Autopopulation::ParseIdentifier
 
-      attr_accessor :data, :account, :works
+      attr_accessor :data, :account, :works, :rejected_doi
 
-      def initialize(account: nil, data: nil, works: nil)
+      def initialize(account: nil, data: nil, works: nil, rejected_doi: nil)
         AccountElevator.switch!(account.cname) if config.active_record?
 
         @account = account
         @data = data
         @works = works
+        @rejected_doi = rejected_doi
       end
 
       # A wrapper that allows saving to Redis when using Hyrax & to  Activerecord for Hyku
@@ -57,11 +58,11 @@ module Hyrax
 
       # takes doi ids of rejected works
       def save_rejected_ids
-        doi_ids = works&.map { |work| work&.doi&.first }
+        @rejected_doi = works&.map { |work| work&.doi&.first } if rejected_doi.empty?
 
-        return unless doi_ids.present?
+        return unless rejected_doi.present?
 
-        save_rejected_work_ids(doi_ids)
+        save_rejected_work_ids(rejected_doi)
         # so we can do chained method call
         self
       end
@@ -104,7 +105,10 @@ module Hyrax
         # eg data a hash and key a string must be doi_list or orcid_list
         def split_string(key)
           str = data&.dig("settings", key)
-          str&.strip&.gsub("\\n", " ")&.split(/[,\s]+/)
+
+          # first gsub removes esacped new line and second gsub removes escaped quotes
+          # the regular expression splits by comma, space or newline
+          str&.strip&.gsub("\\n", " ")&.gsub('"', "")&.split(/[,\s]+/)
         end
 
         def extract_doi_for_hyku
