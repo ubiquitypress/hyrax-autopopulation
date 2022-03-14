@@ -58,7 +58,7 @@ module Hyrax
 
       # takes doi ids of rejected works
       def save_rejected_ids
-        @rejected_doi = works&.map { |work| work&.doi&.first } if rejected_doi.empty?
+        @rejected_doi = works&.map { |work| work&.doi&.first } if rejected_doi.blank?
 
         return unless rejected_doi.present?
 
