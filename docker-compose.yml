@@ -12,8 +12,87 @@ volumes:
 networks:
   internal:
 
+x-app: &app
+  build:
+    context: .
+    dockerfile: Dockerfile
+    target: DEVELOPMENT_IMAGE
+  #image: hyrax-autopopulation/dev:latest
+  # NOTE: To setup the db before the app loads, use the following, but its normally unncessarily slow if you dont have migrations to run
+  # command: bash -c "rm -f spec/internal_test_hyrax/tmp/pids/server.pid && bundle exec rails db:create && bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0"
+  command: bash -c "rm -f spec/internal_test_hyrax/tmp/pids/server.pid && bundle install && bundle exec rails server -b 0.0.0.0"
+  environment: &web_environment
+    DATABASE_ADAPTER: postgresql
+    DATABASE_NAME: hyrax
+    DATABASE_HOST: db
+    DATABASE_PASSWORD: DatabaseFTW
+    DATABASE_USER: postgres
+    DATABASE_TEST_NAME: hyrax_test
+    # End of copy
+    FCREPO_HOST: fcrepo
+    FCREPO_PORT: 8080
+    FCREPO_REST_PATH: fcrepo/rest
+    FCREPO_DEV_BASE_PATH: /dev
+    FCREPO_TEST_BASE_PATH: /test
+    IN_DOCKER: "true"
+    LD_LIBRARY_PATH: /opt/fits/tools/mediainfo/linux
+    RAILS_LOG_TO_STDOUT: "true"
+    REDIS_HOST: redis
+    SECRET_KEY_BASE: asdf
+    SOLR_DEVELOPMENT_URL: http://solr:8983/solr/hyrax-development
+    SOLR_TEST_URL: http://solr:8983/solr/hyrax-test
+    PASSENGER_APP_ENV: development
+  # No .env file is available and without that, the containers will not start, we need to get it from E
+  # env_file:
+  #   - .env
+  volumes:
+    - app:/home/app/spec/internal_test_hyrax/tmp/uploads
+    - assets:/home/app/spec/internal_test_hyrax/public/assets
+    - cache:/home/app/spec/internal_test_hyrax/tmp/cache
+    - .:/home/app
+  stdin_open: true
+  tty: true
+  networks:
+    internal:
+
 services:
-  solr: &solr
+  web:
+    <<: *app
+    depends_on:
+      - db
+      - solr
+      - fcrepo
+      - redis
+      - db_migrate
+      - workers
+    ports:
+      - 3000:3000
+
+  db_migrate:
+    <<: *app
+    command: bundle exec rails db:create db:migrate db:test:prepare
+
+  workers:
+    <<: *app
+    command: bash -c "bundle install && bundle exec sidekiq -r spec/internal_test_hyrax/"
+    depends_on:
+      - db
+      - solr
+      - fcrepo
+      - redis
+      - db_migrate
+
+  redis:
+    image: redis:4
+    command: redis-server
+    volumes:
+      - redis:/data
+    networks:
+      internal:
+    ports:
+      - 6379:6379
+
+  solr:
     image: solr:8.6.2
     volumes:
       - ./spec/internal_test_hyrax/solr/config:/opt/solr/server/configsets/hyrax_conf
@@ -27,7 +106,7 @@ services:
     networks:
       internal:
 
-  fcrepo: &fcrepo
+  fcrepo:
     image: cbeer/fcrepo4:4.7
     ports:
       - "8080:8080"
@@ -38,9 +117,9 @@ services:
     networks:
       internal:
 
-  db: &db
+  db:
     image: postgres:10-alpine
-    environment: &db_environment
+    environment:
       PGDATA: /data
       POSTGRES_PASSWORD: DatabaseFTW
       POSTGRES_USER: postgres
@@ -52,83 +131,3 @@ services:
       - "5432:5432"
     networks:
       internal:
-
-  app: &app
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: DEVELOPMENT_IMAGE
-    #image: hyrax-autopopulation/dev:latest
-    # NOTE: To setup the db before the app loads, use the following, but its normally unncessarily slow if you dont have migrations to run
-    # command: bash -c "rm -f spec/internal_test_hyrax/tmp/pids/server.pid && bundle exec rails db:create && bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0"
-    command: bash -c "rm -f spec/internal_test_hyrax/tmp/pids/server.pid && bundle install && bundle exec rails server -b 0.0.0.0"
-    environment: &web_environment
-      DATABASE_ADAPTER: postgresql
-      DATABASE_NAME: hyrax
-      DATABASE_HOST: db
-      DATABASE_PASSWORD: DatabaseFTW
-      DATABASE_USER: postgres
-      DATABASE_TEST_NAME: hyrax_test
-      # End of copy
-      FCREPO_HOST: fcrepo
-      FCREPO_PORT: 8080
-      FCREPO_REST_PATH: fcrepo/rest
-      FCREPO_DEV_BASE_PATH: /dev
-      FCREPO_TEST_BASE_PATH: /test
-      IN_DOCKER: "true"
-      LD_LIBRARY_PATH: /opt/fits/tools/mediainfo/linux
-      RAILS_LOG_TO_STDOUT: "true"
-      REDIS_HOST: redis
-      SECRET_KEY_BASE: asdf
-      SOLR_DEVELOPMENT_URL: http://solr:8983/solr/hyrax-development
-      SOLR_TEST_URL: http://solr:8983/solr/hyrax-test
-      PASSENGER_APP_ENV: development
-    env_file:
-      - .env
-    volumes:
-      - app:/home/app/spec/internal_test_hyrax/tmp/uploads
-      - assets:/home/app/spec/internal_test_hyrax/public/assets
-      - cache:/home/app/spec/internal_test_hyrax/tmp/cache
-      - .:/home/app
-    networks:
-      internal:
-
-  web:
-    <<: *app
-    environment:
-      <<: *web_environment
-    depends_on:
-      - db
-      - solr
-      - fcrepo
-      - redis
-      - db_migrate
-      - workers
-    stdin_open: true
-    tty: true
-    ports:
-      - 3000:3000
-
-  db_migrate:
-    <<: *app
-    command: bundle exec rails db:create && bundle exec rails db:migrate db:test:prepare
-
-  redis: &redis
-    image: redis:4
-    command: redis-server
-    volumes:
-      - redis:/data
-    networks:
-      internal:
-    ports:
-      - 6379:6379
-
-  workers:
-    <<: *app
-    command: bash -c "bundle install && bundle exec sidekiq -r spec/internal_test_hyrax/"
-    depends_on:
-      - db
-      - solr
-      - fcrepo
-      - redis
-      - db_migrate
