@@ -12,7 +12,6 @@ module Hyrax
 
           work.class.ancestors.include? Hyrax::DOI::DOIBehavior
         end
-
     end
   end
 end

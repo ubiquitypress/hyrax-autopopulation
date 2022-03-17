@@ -14,7 +14,7 @@ module Hyrax
       end
 
       # Allow flipflop to load config/features.rb from the Hyrax gem:
-      initializer 'configure' do
+      initializer "configure" do
         Flipflop::FeatureLoader.current.append(self)
       end
 
@@ -27,10 +27,8 @@ module Hyrax
       # Prepend our views so they have precedence
       config.after_initialize do
         ActionController::Base.prepend_view_path(paths["app/views"].existent)
-        
-        if Object.const_defined? "Hyrax::Actors::DOIActor"
-          ::Hyrax::Actors::DOIActor.prepend(Hyrax::Autopopulation::DoiActorOverride)
-        end
+
+        ::Hyrax::Actors::DOIActor.prepend(Hyrax::Autopopulation::DoiActorOverride) if Object.const_defined? "Hyrax::Actors::DOIActor"
       end
 
       # Allows us to access the configuration object from Rails application config
