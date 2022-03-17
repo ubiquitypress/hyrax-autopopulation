@@ -29,13 +29,28 @@ https://github.com/ubiquitypress/hyku_addons/blob/main/app/models/concerns/hyku_
 
 https://github.com/ubiquitypress/hyku_addons/blob/main/app/models/concerns/hyku_addons/schema/work_base.rb
 
-
 Also for Hyku & HykuAddons users only include:
-````ruby
+
+```ruby
   include Hyrax::Autopopulation::SolrDocumentBehavior
-````
+```
 
 https://github.com/ubiquitypress/hyku_addons/blob/main/app/models/concerns/hyku_addons/solr_document_behavior.rb
+
+## Development
+
+When cloning, you will need to bring in the Hyrax submodule by:
+
+```bash
+cd spec/internal_test_hyrax;
+git submodule init && git submodule update
+```
+
+Then you can build the application from the root folder (`cd ../../`):
+
+```bash
+docker-compose up --build web
+```
 
 ## License
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
