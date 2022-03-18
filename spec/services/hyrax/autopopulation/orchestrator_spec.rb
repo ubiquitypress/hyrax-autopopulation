@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.describe ::Hyrax::Autopopulation::Orchestrator do
   describe "call multiple api " do
     let(:config) { Rails.application.config.hyrax_autopopulation }

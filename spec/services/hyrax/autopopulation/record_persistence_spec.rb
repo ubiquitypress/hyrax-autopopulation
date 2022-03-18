@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.describe Hyrax::Autopopulation::RecordPersistence do
   context "clean strings" do
     let(:bad_string_with_escape_characters) { "\"10.1629/uksg.236\", \"10.1371/journal.pone.0261098\", \"10.1087/20120404\", \"10.5334/joc.210\", \"10.5334/joc.209\"" }

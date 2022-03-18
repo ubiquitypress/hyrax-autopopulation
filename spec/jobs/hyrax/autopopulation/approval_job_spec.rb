@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.describe Hyrax::Autopopulation::ApprovalJob, type: :job do
   describe "create_work" do
     context "using hyrax" do

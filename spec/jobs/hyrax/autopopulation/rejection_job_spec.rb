@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.describe Hyrax::Autopopulation::RejectionJob, type: :job do
   describe "hyrax rejection" do
     let(:work) { create(:work, title: ["work"], autopopulation_status: "draft") }

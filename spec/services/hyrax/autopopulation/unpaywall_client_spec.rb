@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.describe ::Hyrax::Autopopulation::UnpaywallClient do
   let(:config) { Rails.application.config.hyrax_autopopulation }
   let(:doi) { "10.36001/ijphm.2018.v9i1.2693" }

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.describe Hyrax::Autopopulation::PersistIdentifierJob, type: :job do
   let(:settings_hash) { { "settings" => { "doi_list" => "10.1016/j.crvasa.2015.05.007 https://handle.test.datacite.org/10.80090/nphc-8y78" } } }
   let(:args) { { data: settings_hash, account: nil } }

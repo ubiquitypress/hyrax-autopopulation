@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.describe Hyrax::Autopopulation::ParseIdentifier do
   let(:mixed_dois) { [doi, doi_url] }
   let(:doi_url) { "https://handle.test.datacite.org/#{doi_1}" }

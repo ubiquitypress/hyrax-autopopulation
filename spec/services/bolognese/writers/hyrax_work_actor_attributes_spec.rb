@@ -1,7 +1,6 @@
 # frozen_string_literal: true
-require "rails_helper"
 
-describe Bolognese::Writers::HyraxWorkActorAttributes do
+RSpec.describe Bolognese::Writers::HyraxWorkActorAttributes do
   let(:attributes) do
     { doi: ["10.1117/12.2004063"],
       title: ["Single-cell photoacoustic thermometry"],

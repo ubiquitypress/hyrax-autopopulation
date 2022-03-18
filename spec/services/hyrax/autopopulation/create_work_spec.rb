@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.describe Hyrax::Autopopulation::CreateWork do
   describe "create_work" do
     let(:config) { Rails.application.config.hyrax_autopopulation }

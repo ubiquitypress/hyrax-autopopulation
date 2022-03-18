@@ -18,7 +18,7 @@ jobs:
         default: 4
 
     executor:
-      name: "samvera/ruby_fcrepo_solr_redis"
+      name: "samvera/ruby_fcrepo_solr_redis_postgres"
       ruby_version: << parameters.ruby_version >>
 
     parallelism: 4
@@ -80,3 +80,4 @@ workflows:
       - bundle_lint_test:
           name: ruby2-7-1
           parallelism: 1
+
