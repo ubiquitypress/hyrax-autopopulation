@@ -33,7 +33,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "sqlite3", "~> 1.4.2"
 
-  spec.add_development_dependency 'capybara'
+  spec.add_development_dependency "capybara"
   spec.add_development_dependency "chromedriver-helper", "~> 2.1"
   spec.add_development_dependency "webmock", "~> 3.14"
   spec.add_development_dependency "pg"

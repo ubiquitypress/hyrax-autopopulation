@@ -17,6 +17,9 @@ jobs:
       rails_version:
         type: string
         default: 5.2.4.3
+      parallelism:
+        type: integer
+        default: 4
 
     executor:
       name: "samvera/ruby_fcrepo_solr_redis_postgres"
