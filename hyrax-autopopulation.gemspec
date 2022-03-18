@@ -39,6 +39,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pg"
   spec.add_development_dependency "rspec-rails"
   spec.add_development_dependency "factory_bot_rails"
+  spec.add_development_dependency "rspec_junit_formatter", "~> 0.4"
   spec.add_development_dependency "web-console", "~> 3.7"
   spec.add_development_dependency "bixby", "~> 1.0.0"
   spec.add_development_dependency "webdrivers", "~> 4.0"
