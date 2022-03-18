@@ -46,11 +46,11 @@ module Hyrax
       def self.mixins
         ::Bolognese::Metadata.prepend ::Bolognese::Writers::HyraxWorkActorAttributes
 
-        if config.hyrax_autopopulation.app_name != "hyku_addons"
-          ::Hyrax::BasicMetadata.include(Hyrax::Autopopulation::AutopopulationProperty)
-          ::Hyrax::BasicMetadata.include(Hyrax::Autopopulation::DoiProperty)
-          ::Hyrax::SolrDocumentBehavior.include(Hyrax::Autopopulation::SolrDocumentBehavior)
-        end
+        return unless config.hyrax_autopopulation.app_name == "hyku_addons"
+
+        ::Hyrax::BasicMetadata.include(Hyrax::Autopopulation::AutopopulationProperty)
+        ::Hyrax::BasicMetadata.include(Hyrax::Autopopulation::DoiProperty)
+        ::Hyrax::SolrDocumentBehavior.include(Hyrax::Autopopulation::SolrDocumentBehavior)
       end
 
       # Use #to_prepare because it reloads where after_initialize only runs once
