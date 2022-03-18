@@ -1,4 +1,4 @@
-[submodule "spec/internal_test_hyrax"]
-	path = spec/internal_test_hyrax
-	url = git@github.com:ubiquitypress/hyrax_test_app.git
-  branch = main
+[submodule "spec/internal_test_hyku"]
+	path = spec/internal_test_hyku
+	url = https://github.com/ubiquitypress/hyku_base.git
+	branch = main

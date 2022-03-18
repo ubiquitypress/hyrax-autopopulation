@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require "spec_helper"
-require File.expand_path("internal_test_hyrax/spec/rails_helper.rb", __dir__)
+require File.expand_path("internal_test_hyku/spec/rails_helper.rb", __dir__)
 ENV["RAILS_ENV"] ||= "test"
-require File.expand_path("internal_test_hyrax/config/environment", __dir__)
+require File.expand_path("internal_test_hyku/config/environment", __dir__)
 
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
@@ -88,13 +88,13 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   # Skip internal tests
-  config.exclude_pattern = "./spec/internal_test_hyrax/spec/**/*_spec.rb"
+  config.exclude_pattern = "./spec/internal_test_hyku/spec/**/*_spec.rb"
 
   config.include ActiveSupport::Testing::TimeHelpers
 
   # Internal Tests to skip
   # Make sure this around is declared first so it runs before other around callbacks
-  skip_internal_test_list = ["./spec/internal_test_hyrax/spec/features/create_generic_work_spec.rb"]
+  skip_internal_test_list = ["./spec/internal_test_hyku/spec/features/create_generic_work_spec.rb"]
   config.around do |example|
     if skip_internal_test_list.include? example.file_path
       skip "Internal test skipped."

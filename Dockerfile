@@ -42,8 +42,8 @@ COPY --chown=app:app Gemfile ./Gemfile
 COPY --chown=app:app Gemfile.lock ./Gemfile.lock
 # COPY --chown=app:app spec/test_app/Gemfile ./spec/test_app/Gemfile
 # COPY --chown=app:app spec/test_app/Gemfile.lock ./spec/test_app/Gemfile.lock
-COPY --chown=app:app spec/internal_test_hyrax/Gemfile ./spec/internal_test_hyrax/Gemfile
-COPY --chown=app:app spec/internal_test_hyrax/Gemfile.lock ./spec/internal_test_hyrax/Gemfile.lock
+COPY --chown=app:app spec/internal_test_hyku/Gemfile ./spec/internal_test_hyku/Gemfile
+COPY --chown=app:app spec/internal_test_hyku/Gemfile.lock ./spec/internal_test_hyku/Gemfile.lock
 
 ENV CFLAGS=-Wno-error=format-overflow
 RUN bundle config build.nokogiri --use-system-libraries \

@@ -62,7 +62,7 @@ jobs:
       - samvera/rubocop
 
       - samvera/install_solr_core:
-          solr_config_path: "spec/internal_test_hyrax/solr/config"
+          solr_config_path: "spec/internal_test_hyku/solr/config"
 
       - run:
           name: Install Hyrax Autopopulation
