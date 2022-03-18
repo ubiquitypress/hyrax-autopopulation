@@ -43,7 +43,7 @@ module Hyrax
       end
 
       # Pre-existing Work type overrides and dynamic includes
-      def self.dynamically_include_mixins
+      def self.mixins
         ::Bolognese::Metadata.prepend ::Bolognese::Writers::HyraxWorkActorAttributes
 
         if config.hyrax_autopopulation.app_name != "hyku_addons"
@@ -55,11 +55,8 @@ module Hyrax
 
       # Use #to_prepare because it reloads where after_initialize only runs once
       # This might slow down every request so only do it in development environment
-      if Rails.env.development?
-        config.to_prepare { Hyrax::Autopopulation::Engine.dynamically_include_mixins }
-      else
-        config.after_initialize { Hyrax::Autopopulation::Engine.dynamically_include_mixins }
-      end
+      method = Rails.env.development? ? :to_prepare : :after_initialize
+      config.send(method) { Hyrax::Autopopulation::Engine.mixins }
     end
   end
 end
