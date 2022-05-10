@@ -16,6 +16,9 @@ module Hyrax
         @account = account
         @user = user
 
+        # set the work state to :inactive which also suppresses or ensures it is not
+        # returned by search until approved
+        attributes[:state] = Vocab::FedoraResourceStatus.inactive
         # This is not a property of any work, so it cannot be passed to the actor
         @pdf_url = attributes.delete(:unpaywall_pdf_url)
 
