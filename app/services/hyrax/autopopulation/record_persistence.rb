@@ -46,7 +46,7 @@ module Hyrax
       def approved_works
         works&.compact&.each do |work|
           work&.file_sets&.first&.update(visibility: "open")
-          work.update(autopopulation_status: "approved", visibility: "open")
+          work.update(autopopulation_status: "approved", visibility: "open", state: Vocab::FedoraResourceStatus.active)
         end
       end
 
