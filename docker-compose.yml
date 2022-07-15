@@ -19,8 +19,8 @@ x-app: &app
     target: DEVELOPMENT_IMAGE
   #image: hyrax-autopopulation/dev:latest
   # NOTE: To setup the db before the app loads, use the following, but its normally unncessarily slow if you dont have migrations to run
-  # command: bash -c "rm -f spec/internal_test_hyrax/tmp/pids/server.pid && bundle exec rails db:create && bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0"
-  command: bash -c "rm -f spec/internal_test_hyrax/tmp/pids/server.pid && bundle install && bundle exec rails server -b 0.0.0.0"
+  # command: bash -c "rm -f spec/internal_test_hyku/tmp/pids/server.pid && bundle exec rails db:create && bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0"
+  command: bash -c "rm -f spec/internal_test_hyku/tmp/pids/server.pid && bundle install && bundle exec rails server -b 0.0.0.0"
   environment: &web_environment
     DATABASE_ADAPTER: postgresql
     DATABASE_NAME: hyrax
@@ -46,9 +46,9 @@ x-app: &app
   # env_file:
   #   - .env
   volumes:
-    - app:/home/app/spec/internal_test_hyrax/tmp/uploads
-    - assets:/home/app/spec/internal_test_hyrax/public/assets
-    - cache:/home/app/spec/internal_test_hyrax/tmp/cache
+    - app:/home/app/spec/internal_test_hyku/tmp/uploads
+    - assets:/home/app/spec/internal_test_hyku/public/assets
+    - cache:/home/app/spec/internal_test_hyku/tmp/cache
     - .:/home/app
   stdin_open: true
   tty: true
@@ -74,7 +74,7 @@ services:
 
   workers:
     <<: *app
-    command: bash -c "bundle install && bundle exec sidekiq -r spec/internal_test_hyrax/"
+    command: bash -c "bundle install && bundle exec sidekiq -r spec/internal_test_hyku/"
     depends_on:
       - db
       - solr
@@ -95,7 +95,7 @@ services:
   solr:
     image: solr:8.6.2
     volumes:
-      - ./spec/internal_test_hyrax/solr/config:/opt/solr/server/configsets/hyrax_conf
+      - ./spec/internal_test_hyku/solr/config:/opt/solr/server/configsets/hyrax_conf
       - solr:/var/solr/data:cached
     command:
       - sh

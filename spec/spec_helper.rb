@@ -94,4 +94,4 @@ RSpec.configure do |config|
   #   Kernel.srand config.seed
 end
 
-require File.expand_path("internal_test_hyrax/spec/spec_helper.rb", __dir__)
+require File.expand_path("internal_test_hyku/spec/spec_helper.rb", __dir__)

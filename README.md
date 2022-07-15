@@ -42,7 +42,7 @@ https://github.com/ubiquitypress/hyku_addons/blob/main/app/models/concerns/hyku_
 When cloning, you will need to bring in the Hyrax submodule by:
 
 ```bash
-cd spec/internal_test_hyrax;
+cd spec/internal_test_hyku;
 git submodule init && git submodule update
 ```
 
