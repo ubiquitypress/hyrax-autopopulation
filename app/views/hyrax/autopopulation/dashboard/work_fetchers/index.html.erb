@@ -23,6 +23,9 @@
           <a href="#autopopulation-settings" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.tabs.settings") %></a>
         </li>
         <li>
+          <a href="#autopopulation-ids" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.tabs.ids") %></a>
+        </li>
+        <li>
           <a href="#fetched-import" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.tabs.draft") %></a>
         </li>
         <li>
@@ -31,6 +34,17 @@
       </ul>
 
       <div class="tab-content">
+        
+        <div id="autopopulation-ids" class="tab-pane">
+          <div class="panel panel-default labels">
+            <div class="panel-body">
+              <div>
+                <%= render "settings_page", account: @account, saved_orcids: @saved_orcids, saved_doi: @saved_doi, rejected_doi: @rejected_doi  %>
+              </div>
+            </div> 
+          </div> 
+        </div> <!-- closes #autopopulation-ids -->
+
         <div id="fetched-import" class="tab-pane">
           <div class="panel panel-default labels">
             <div class="panel-body">
@@ -66,18 +80,22 @@
         <div id="approved-import" class="tab-pane">
           <div class="panel panel-default labels">
             <div class="panel-body">
-              <%= render "index_table", works: @approved_works %>
-            <div>
-          </div>
-        </div>
-      </div> 
-      </div> 
+              <div>
+                <%= render "index_table", works: @approved_works %>
+              <div>
+            </div>
+          </div> 
+        </div> 
           
       <div id="autopopulation-settings" class="tab-pane active">
        <div class="panel panel-default labels">
         <div class="panel-body">
           <div class="table-responsive">
-            <%= render "settings_page", account: @account, saved_orcids: @saved_orcids, saved_doi: @saved_doi, rejected_doi: @rejected_doi  %>
+            <% if Rails.application.config.hyrax_autopopulation.active_record? %>
+              <%= render "hyku_autopopulation_settings_form" %>  
+            <% else %>
+              <%= render "hyrax_autopopulation_settings_form" %>
+            <% end %>
           </div>
         <div>
       </div>
