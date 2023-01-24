@@ -2,24 +2,24 @@
   <div class="row">
     <div class="col-md-3">
       <ul class="navbar navbar-default navbar-fixed-side">
-        <li class="active"><a href="#sources" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.sources") %></a></li>
-        <li><a href="#previously-added-id" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.previously_added_id") %></a></li>
+        <li class="active"><a href="#previously-added-id" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.previously_added_id") %></a></li>
+
+        <li><a href="#rejected-doi" role="tab" data-toggle="tab"><%= t("hyrax.autopopulation.rejected_doi") %></a></li>
       </ul>
     </div>
 
     <div class="col-md-9">
       <div class="tab-content">
-        <div id="sources" class="tab-pane active">
+        <div id="rejected-doi" class="tab-pane active">
           <div class="panel panel-default labels">
-            <% if Rails.application.config.hyrax_autopopulation.active_record? %>
-              <%= render "hyku_autopopulation_settings_form" %>  
-            <% else %>
-              <%= render "hyrax_autopopulation_settings_form" %>
-            <% end %>
+            <div class="panel-body">
+              <p class="text-primary text-center"> <%= rejected_doi.count %> <%= t("hyrax.autopopulation.rejected_doi") %> </p>
+              <%= rejected_doi.join(", ") %>
+            </div>
           </div>
         </div>
 
-        <div id="previously-added-id" class="tab-pane">
+        <div id="previously-added-id" class="tab-pane active">
           <div class="panel panel-default labels">
             <div class="panel-body">
               <p class="text-primary text-center"> <%= saved_orcids.count %> <%= t("hyrax.autopopulation.saved_orcids") %> </p>
@@ -31,10 +31,6 @@
               <%= saved_doi.join(", ") %>
             </div>
 
-            <div class="panel-body">
-              <p class="text-primary text-center"> <%= rejected_doi.count %> <%= t("hyrax.autopopulation.rejected_doi") %> </p>
-              <%= rejected_doi.join(", ") %>
-            </div>
           </div>
         </div>
        </div> <!-- .tab-content -->

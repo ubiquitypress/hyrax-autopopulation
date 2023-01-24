@@ -6,7 +6,7 @@ en:
           autopopulations: Autopopulation
       preference: Autopopulation Preference
       sources: Autopopulation Form
-      previously_added_id: Previously Added IDs
+      previously_added_id: Saved IDs
       page_header: Autopopulate Works
       saved_orcids: ORCiD IDs
       saved_doi: DOIs
