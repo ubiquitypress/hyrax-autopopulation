@@ -11,7 +11,7 @@ module Bolognese
           creator: write_actor_json_field("creator"),
           contributor: write_actor_json_field("contributor"),
           editor: write_actor_json_field("contributor"), resource_type: write_actor_resource_type,
-          visibility: "restricted", autopopulation_status: "draft"
+          visibility: "open", autopopulation_status: "draft"
         }
       end
 
