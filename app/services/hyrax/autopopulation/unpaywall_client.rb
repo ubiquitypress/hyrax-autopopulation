@@ -14,7 +14,7 @@ module Hyrax
 
       def data
         fetch_data
-        return unless fetch_data&.body&.present?
+        return unless fetch_data&.body&.present? && valid_json?(fetch_data.body)
 
         @data = JSON.parse(fetch_data.body).presence || {}
       end
@@ -24,6 +24,15 @@ module Hyrax
         def fetch_data
           @_fetch_data ||= Faraday.get("#{ENDPOINT}/#{doi}", { email: "unpaywall_01@example.com" }, "Content-Type" => "application/json")
         end
+
+        def valid_json?(data)
+          return false unless data.is_a? String
+          
+          JSON.parse(data)
+          true
+        rescue JSON::ParserError
+          false
+        end        
     end
   end
 end

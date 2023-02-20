@@ -3,7 +3,8 @@
 module Hyrax
   module Autopopulation
     class CreateWork
-      attr_accessor :attributes, :user, :account, :pdf_url
+      attr_accessor :attributes, :user, :account, :pdf_url, :uploaded_files, :admin_set
+      ADMINSET_NAME = "autopopulation".freeze
 
       # params [attributes] is a hash constructed from a crossref response that has been crosswalked by a custom Bolognese writer
       # example using the doi 10.1117/12.2004063
@@ -21,8 +22,11 @@ module Hyrax
         attributes[:state] = Vocab::FedoraResourceStatus.inactive
         # This is not a property of any work, so it cannot be passed to the actor
         @pdf_url = attributes.delete(:unpaywall_pdf_url)
+        # create Hyrax::Uploaded file object if a pdf url exists
+        pdf_url.present? && uploaded_file
 
-        pdf_url.present? && uploaded_file.present? && attributes.merge!(uploaded_files: uploaded_file)
+        # create or set the admin_set to be used for this work
+        attributes[:admin_set_id] = get_admin_set.id if get_admin_set.present?
         @attributes = attributes
       end
 
@@ -30,6 +34,9 @@ module Hyrax
         # saves work
         # This returns true when the work is aved or false
         actor.create(actor_environment)
+
+        # attach files to the work
+        AttachFilesToWorkJob.perform_later(actor_environment.curation_concern, @uploaded_files) if @uploaded_files.present?
       end
 
       private
@@ -53,9 +60,30 @@ module Hyrax
 
         def uploaded_file
           # return unless pdf_url.present?
+
           file_class = Rails.application.config.hyrax_autopopulation.create_file_class.constantize
           file = file_class.new(pdf_url, user, account).save
-          file.is_a?(Hyrax::UploadedFile) ? [file.id] : false
+
+          # If a file was saved set @uploaded_files so we can pas it to AttachFilesToWorkJob later
+          @uploaded_files = [file] if file.is_a?(Hyrax::UploadedFile)
+        end
+
+        def get_admin_set
+          return @admin_set if @admin_set.present?
+    
+          @get_admin_set ||= AdminSet.where(title: ADMINSET_NAME)&.first
+          if @get_admin_set.present?
+            @admin_set = @get_admin_set
+          else
+            create_admin_set
+          end
+        end
+    
+        # creates admin_set for autopopulated works only if non exists
+        def create_admin_set
+          new_admin_set = AdminSet.new(id: SecureRandom.uuid, title: Array.wrap(ADMINSET_NAME))
+          admin_set_create_service = ::Hyrax::AdminSetCreateService.new(admin_set: new_admin_set, creating_user: nil).create
+          @admin_set = admin_set_create_service.admin_set
         end
     end
   end
