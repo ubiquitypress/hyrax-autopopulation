@@ -20,6 +20,11 @@ module Hyrax
         # set the work state to :inactive which also suppresses or ensures it is not
         # returned by search until approved
         attributes[:state] = Vocab::FedoraResourceStatus.inactive
+
+        # Logging
+        puts "#{@attributes[:state].inspect}"
+        puts "#{actor_environment.curation_concern.attributes.inspect}"
+
         # This is not a property of any work, so it cannot be passed to the actor
         @pdf_url = attributes.delete(:unpaywall_pdf_url)
         # create Hyrax::Uploaded file object if a pdf url exists
