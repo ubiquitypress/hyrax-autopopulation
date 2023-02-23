@@ -20,11 +20,6 @@ module Hyrax
         # set the work state to :inactive which also suppresses or ensures it is not
         # returned by search until approved
         attributes[:state] = Vocab::FedoraResourceStatus.inactive
-
-        # Logging
-        puts "#{@attributes[:state].inspect}"
-        puts "#{actor_environment.curation_concern.attributes.inspect}"
-
         # This is not a property of any work, so it cannot be passed to the actor
         @pdf_url = attributes.delete(:unpaywall_pdf_url)
         # create Hyrax::Uploaded file object if a pdf url exists
@@ -33,12 +28,17 @@ module Hyrax
         # create or set the admin_set to be used for this work
         attributes[:admin_set_id] = get_admin_set.id if get_admin_set.present?
         @attributes = attributes
+
+        # Logging
+        puts "LOG_ATTRIBUTES_STATE_INITIALIZE #{@attributes[:state].inspect}"
+        puts "LOG_ACTOR_ENVIRONMENT_INITIALIZE #{actor_environment.curation_concern.attributes.inspect}"
       end
 
       def save
         # saves work
         # This returns true when the work is aved or false
         actor.create(actor_environment)
+        puts "LOG_ACTOR_ENVIRONMENT_SAVE #{actor_environment.curation_concern.attributes.inspect}"
 
         # attach files to the work
         AttachFilesToWorkJob.perform_later(actor_environment.curation_concern, @uploaded_files) if @uploaded_files.present?
