@@ -53,6 +53,9 @@ module Hyrax
 
         def actor_environment
           klass = Hyrax::Actors::Environment
+          puts "LOG_KLASS_ACTOR_ENVIRONMENT #{klass.inspect}"
+          puts "LOG_@_ACTOR_ENVIRONMENT_ACTOR_ENVIRONMENT_BEFORE_ASSIGNMENT #{@_actor_environment.inspect}"
+          puts "LOG_ACTIVE_RECORD?_ACTOR_ENVIRONMENT #{Rails.application.config.hyrax_autopopulation.active_record?.inspect}"
 
           @_actor_environment ||= if Rails.application.config.hyrax_autopopulation.active_record?
                                     klass.new(GenericWork.new, ::Ability.new(user), attributes)
@@ -62,6 +65,7 @@ module Hyrax
                                     new_attributes = attributes.except(*keys)
                                     klass.new(GenericWork.new, ::Ability.new(user), new_attributes)
                                   end
+          puts "LOG_@_ACTOR_ENVIRONMENT_ACTOR_ENVIRONMENT_AFTER_ASSIGNMENT #{@_actor_environment.inspect}"
         end
 
         def uploaded_file
