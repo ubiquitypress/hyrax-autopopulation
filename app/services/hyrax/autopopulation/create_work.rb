@@ -38,8 +38,9 @@ module Hyrax
       def save
         # saves work
         # This returns true when the work is aved or false
+        puts "LOG_ACTOR_ENVIRONMENT_SAVE_BEFORE_CREATE #{actor_environment.curation_concern.attributes.inspect}"
         actor.create(actor_environment)
-        puts "LOG_ACTOR_ENVIRONMENT_SAVE #{actor_environment.curation_concern.attributes.inspect}"
+        puts "LOG_ACTOR_ENVIRONMENT_SAVE_AFTER_CREATE #{actor_environment.curation_concern.attributes.inspect}"
 
         # attach files to the work
         AttachFilesToWorkJob.perform_later(actor_environment.curation_concern, @uploaded_files) if @uploaded_files.present?
@@ -53,9 +54,8 @@ module Hyrax
 
         def actor_environment
           klass = Hyrax::Actors::Environment
-          puts "LOG_KLASS_ACTOR_ENVIRONMENT #{klass.inspect}"
-          puts "LOG_@_ACTOR_ENVIRONMENT_ACTOR_ENVIRONMENT_BEFORE_ASSIGNMENT #{@_actor_environment.inspect}"
-          puts "LOG_ACTIVE_RECORD?_ACTOR_ENVIRONMENT #{Rails.application.config.hyrax_autopopulation.active_record?.inspect}"
+
+          puts "LOG_ATTRIBUTES_ACTOR_ENVIRONMENT #{attributes.inspect}"
 
           @_actor_environment ||= if Rails.application.config.hyrax_autopopulation.active_record?
                                     klass.new(GenericWork.new, ::Ability.new(user), attributes)
@@ -65,7 +65,6 @@ module Hyrax
                                     new_attributes = attributes.except(*keys)
                                     klass.new(GenericWork.new, ::Ability.new(user), new_attributes)
                                   end
-          puts "LOG_@_ACTOR_ENVIRONMENT_ACTOR_ENVIRONMENT_AFTER_ASSIGNMENT #{@_actor_environment.inspect}"
         end
 
         def uploaded_file
@@ -80,7 +79,7 @@ module Hyrax
 
         def get_admin_set
           return @admin_set if @admin_set.present?
-    
+
           @get_admin_set ||= AdminSet.where(title: ADMINSET_NAME)&.first
           if @get_admin_set.present?
             @admin_set = @get_admin_set
@@ -88,7 +87,7 @@ module Hyrax
             create_admin_set
           end
         end
-    
+
         # creates admin_set for autopopulated works only if non exists
         def create_admin_set
           new_admin_set = AdminSet.new(id: SecureRandom.uuid, title: Array.wrap(ADMINSET_NAME))
