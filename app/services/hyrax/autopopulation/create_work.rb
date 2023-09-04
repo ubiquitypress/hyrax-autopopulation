@@ -47,6 +47,7 @@ module Hyrax
 
         def actor_environment
           klass = Hyrax::Actors::Environment
+          puts "LOG_ATTRIBUTES #{attributes.inspect}"
           @_actor_environment ||= if Rails.application.config.hyrax_autopopulation.active_record?
                                     klass.new(GenericWork.new, ::Ability.new(user), attributes)
                                   else
