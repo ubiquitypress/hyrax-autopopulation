@@ -7,7 +7,7 @@ module Bolognese
         {
           doi: Array(meta["doi"]),
           title: meta["titles"].pluck("title"), date_published: write_actor_date_published,
-          type: Array(meta["type"]),
+          type: Array.wrap(meta["type"]),
           publisher: Array.wrap(meta["publisher"]),
           creator: write_actor_json_field("creator"),
           contributor: write_actor_json_field("contributor"),
