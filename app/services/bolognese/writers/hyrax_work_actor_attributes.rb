@@ -20,7 +20,7 @@ module Bolognese
         # type eg creators, contributors, editors
         def write_actor_json_field(key_type)
           key_type = key_type.to_s.downcase
-          if Object.const_defined?(:mapped_work_type) && mapped_work_type.method_defined?(:json_fields)
+          if Object.const_defined?(mapped_work_type) && mapped_work_type.method_defined?(:json_fields)
             meta[key_type.pluralize].each_with_index.inject([]) do |array, (hash, index)|
               hash["#{key_type}_position"] = index
               hash["#{key_type}_name_type"] = hash["nameType"]
