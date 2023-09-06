@@ -7,7 +7,6 @@ module Bolognese
         {
           doi: Array(meta["doi"]),
           title: meta["titles"].pluck("title"), date_published: write_actor_date_published,
-          type: Array.wrap(meta["type"]),
           publisher: Array.wrap(meta["publisher"]),
           creator: write_actor_json_field("creator"),
           contributor: write_actor_json_field("contributor"),
@@ -21,7 +20,7 @@ module Bolognese
         # type eg creators, contributors, editors
         def write_actor_json_field(key_type)
           key_type = key_type.to_s.downcase
-          if Object.const_defined?(:GenericWork) && GenericWork.method_defined?(:json_fields)
+          if Object.const_defined?(:mapped_work_type) && mapped_work_type.method_defined?(:json_fields)
             meta[key_type.pluralize].each_with_index.inject([]) do |array, (hash, index)|
               hash["#{key_type}_position"] = index
               hash["#{key_type}_name_type"] = hash["nameType"]
@@ -44,7 +43,7 @@ module Bolognese
           type = meta["types"].dig("resourceType")&.titleize
 
           options = if Object.const_defined?("HykuAddons::ResourceTypesService")
-                      ::HykuAddons::ResourceTypesService.new(model: GenericWork).select_active_options.flatten.uniq
+                      ::HykuAddons::ResourceTypesService.new(model: mapped_work_type).select_active_options.flatten.uniq
                       # options.include?(type) ? Array.wrap(type) : ["Other"]
                     else
                       ::Hyrax::ResourceTypesService.select_options.flatten.uniq
