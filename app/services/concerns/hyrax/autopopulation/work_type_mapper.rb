@@ -11,16 +11,20 @@ module Hyrax
           crossref_type = meta["type"]
           crossref_hyku_mappings = @account.settings["crossref_hyku_mappings"]
 
+          puts "LOG_crossref_type #{crossref_type.inspect}"
+          puts "LOG_crossref_hyku_mappings #{crossref_hyku_mappings.inspect}"
+
           if crossref_hyku_mappings.key?(crossref_type)
-            klass_name = crossref_hyku_mappings[crossref_type].camelize.constantize
+            klass_name = crossref_hyku_mappings[crossref_type].camelize
+            puts "LOG_klass_name #{klass_name.inspect}"
             return klass_name if class_exists?(klass_name)
           end
 
-          GenericWork
+          "GenericWork"
         end
 
         def class_exists?(class_name)
-          klass = Hyrax::Collections.const_get(class_name)
+          klass = HykuAddons.const_get(class_name)
           klass.is_a?(Class)
         rescue NameError
           false

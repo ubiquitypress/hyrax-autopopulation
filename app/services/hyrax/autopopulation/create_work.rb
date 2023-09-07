@@ -49,12 +49,12 @@ module Hyrax
           klass = Hyrax::Actors::Environment
           puts "LOG_ATTRIBUTES #{attributes.inspect}"
           @_actor_environment ||= if Rails.application.config.hyrax_autopopulation.active_record?
-                                    klass.new(mapped_work_type.new, ::Ability.new(user), attributes)
+                                    klass.new(Object.const_get(mapped_work_type).new, ::Ability.new(user), attributes)
                                   else
                                     # Remove fields not defined by Hyrax
                                     keys = %i[date_published editor]
                                     new_attributes = attributes.except(*keys)
-                                    klass.new(mapped_work_type.new, ::Ability.new(user), new_attributes)
+                                    klass.new(Object.const_get(mapped_work_type).new, ::Ability.new(user), new_attributes)
                                   end
         end
 
