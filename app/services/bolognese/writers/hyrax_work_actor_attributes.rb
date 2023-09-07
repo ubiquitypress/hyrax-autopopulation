@@ -5,7 +5,9 @@ module Bolognese
     module HyraxWorkActorAttributes
       include Hyrax::Autopopulation::WorkTypeMapper
 
-      @crossref_work_type = meta["types"].dig("citeproc")&.titleize
+      def crossref_work_type
+        @crossref_work_type = meta["types"].dig("citeproc")&.titleize
+      end
 
       def build_work_actor_attributes
         {

@@ -4,6 +4,7 @@ module Hyrax
   module Autopopulation
     module WorkTypeMapper
       extend ActiveSupport::Concern
+      include Bolognese::Writers::HyraxWorkActorAttributes
 
       private
 
