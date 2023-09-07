@@ -3,7 +3,7 @@
 module Hyrax
   module Autopopulation
     class CreateWork
-
+      include Bolognese::Writers::HyraxWorkActorAttributes
       attr_accessor :attributes, :user, :account, :pdf_url, :uploaded_files, :admin_set
       ADMINSET_NAME = "autopopulation".freeze
 
