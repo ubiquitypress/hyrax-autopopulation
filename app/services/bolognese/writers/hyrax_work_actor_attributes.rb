@@ -3,7 +3,6 @@
 module Bolognese
   module Writers
     module HyraxWorkActorAttributes
-      include Hyrax::Autopopulation::WorkTypeMapper
 
       # def crossref_work_type
       #  @crossref_work_type = meta["types"].dig("citeproc")&.titleize
