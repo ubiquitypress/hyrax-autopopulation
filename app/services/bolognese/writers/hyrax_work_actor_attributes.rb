@@ -3,7 +3,6 @@
 module Bolognese
   module Writers
     module HyraxWorkActorAttributes
-      include Hyrax::Autopopulation::WorkTypeMapper
       def build_work_actor_attributes
         {
           doi: Array(meta["doi"]),
