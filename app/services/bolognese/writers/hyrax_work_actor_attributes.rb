@@ -17,7 +17,7 @@ module Bolognese
       end
 
       def crossref_work_type
-        @crossref_work_type = meta["types"]
+        @crossref_work_type = meta["types"].dig("citeproc")&.titleize
       end
 
       private
