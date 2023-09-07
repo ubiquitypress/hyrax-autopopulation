@@ -5,9 +5,9 @@ module Bolognese
     module HyraxWorkActorAttributes
       include Hyrax::Autopopulation::WorkTypeMapper
 
-      def crossref_work_type
-        @crossref_work_type = meta["types"].dig("citeproc")&.titleize
-      end
+      # def crossref_work_type
+      #  @crossref_work_type = meta["types"].dig("citeproc")&.titleize
+      # end
 
       def build_work_actor_attributes
         {
@@ -61,6 +61,29 @@ module Bolognese
         def write_actor_date_published
           date = get_year_month_day(date_registered)
           Array.wrap("date_published_year" => date&.first&.to_s, "date_published_month" => date[1]&.to_s, "date_published_day" => date&.last&.to_s)
+        end
+
+        def mapped_work_type
+          crossref_type = meta["types"].dig("citeproc")&.titleize
+          crossref_hyku_mappings = Site.account.settings&.dig("crossref_hyku_mappings")
+
+          puts "LOG_crossref_type #{crossref_type.inspect}"
+          puts "LOG_crossref_hyku_mappings #{crossref_hyku_mappings.inspect}"
+
+          if crossref_hyku_mappings.key?(crossref_type)
+            klass_name = crossref_hyku_mappings[crossref_type].camelize
+            puts "LOG_klass_name #{klass_name.inspect}"
+            return klass_name if class_exists?(klass_name)
+          end
+
+          "GenericWork"
+        end
+
+        def class_exists?(class_name)
+          klass = HykuAddons.const_get(class_name)
+          klass.is_a?(Class)
+        rescue NameError
+          false
         end
     end
   end

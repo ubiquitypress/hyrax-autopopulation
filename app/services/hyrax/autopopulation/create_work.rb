@@ -3,7 +3,6 @@
 module Hyrax
   module Autopopulation
     class CreateWork
-      include Hyrax::Autopopulation::WorkTypeMapper
 
       attr_accessor :attributes, :user, :account, :pdf_url, :uploaded_files, :admin_set
       ADMINSET_NAME = "autopopulation".freeze
