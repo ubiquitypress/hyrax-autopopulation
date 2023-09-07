@@ -8,7 +8,7 @@ module Hyrax
       private
 
         def mapped_work_type
-          crossref_type = meta["type"]
+          crossref_type = @crossref_work_type
           crossref_hyku_mappings = Site.account.settings&.dig("crossref_hyku_mappings")
 
           puts "LOG_crossref_type #{crossref_type.inspect}"

@@ -16,6 +16,10 @@ module Bolognese
         }
       end
 
+      def crossref_work_type
+        @crossref_work_type = meta["type"]
+      end
+
       private
 
         # type eg creators, contributors, editors
