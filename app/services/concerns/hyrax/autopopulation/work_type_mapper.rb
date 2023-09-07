@@ -2,12 +2,8 @@
 
 module Hyrax
   module Autopopulation
-    class WorkTypeMapper
-      attr_accessor :account
-
-      def initialize(account = nil)
-        @account = account
-      end
+    module WorkTypeMapper
+      extend ActiveSupport::Concern
 
       def mapped_work_type
         crossref_type = meta["type"]
