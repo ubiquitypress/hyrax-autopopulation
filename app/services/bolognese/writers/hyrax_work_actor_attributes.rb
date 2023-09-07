@@ -25,7 +25,7 @@ module Bolognese
         # type eg creators, contributors, editors
         def write_actor_json_field(key_type)
           key_type = key_type.to_s.downcase
-          if Object.const_get(mapped_work_type).method_defined?(:json_fields)
+          if Object.const_get(@mapped_work_type).method_defined?(:json_fields)
             meta[key_type.pluralize].each_with_index.inject([]) do |array, (hash, index)|
               hash["#{key_type}_position"] = index
               hash["#{key_type}_name_type"] = hash["nameType"]
@@ -48,7 +48,7 @@ module Bolognese
           type = meta["types"].dig("resourceType")&.titleize
 
           options = if Object.const_defined?("HykuAddons::ResourceTypesService")
-                      ::HykuAddons::ResourceTypesService.new(model: Object.const_get(mapped_work_type)).select_active_options.flatten.uniq
+                      ::HykuAddons::ResourceTypesService.new(model: Object.const_get(@mapped_work_type)).select_active_options.flatten.uniq
                       # options.include?(type) ? Array.wrap(type) : ["Other"]
                     else
                       ::Hyrax::ResourceTypesService.select_options.flatten.uniq
@@ -63,7 +63,7 @@ module Bolognese
         end
 
         def mapped_work_type
-          crossref_type = meta["types"].dig("citeproc")&.titleize
+          crossref_type = meta["types"].dig("citeproc")
           crossref_hyku_mappings = Site.account.settings&.dig("crossref_hyku_mappings")
 
           puts "LOG_crossref_type #{crossref_type.inspect}"
@@ -72,10 +72,10 @@ module Bolognese
           if crossref_hyku_mappings.key?(crossref_type)
             klass_name = crossref_hyku_mappings[crossref_type].camelize
             puts "LOG_klass_name #{klass_name.inspect}"
-            return klass_name if class_exists?(klass_name)
+            @mapped_work_type = klass_name if class_exists?(klass_name)
           end
 
-          "GenericWork"
+          @mapped_work_type = "GenericWork"
         end
 
         def class_exists?(class_name)
