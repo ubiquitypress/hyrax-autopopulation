@@ -4,6 +4,9 @@ module Bolognese
   module Writers
     module HyraxWorkActorAttributes
       include Hyrax::Autopopulation::WorkTypeMapper
+
+      @crossref_work_type = meta["types"].dig("citeproc")&.titleize
+
       def build_work_actor_attributes
         {
           doi: Array(meta["doi"]),
@@ -14,10 +17,6 @@ module Bolognese
           editor: write_actor_json_field("contributor"), resource_type: write_actor_resource_type,
           visibility: "open", autopopulation_status: "draft"
         }
-      end
-
-      def crossref_work_type
-        @crossref_work_type = meta["types"].dig("citeproc")&.titleize
       end
 
       private
