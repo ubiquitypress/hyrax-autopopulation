@@ -95,6 +95,10 @@ module Hyrax
         def fetch_crossref_work_type(doi)
           config.crossref_bolognese_client.constantize.new(input: doi)&.build_crossref_work_type
         end
+
+        def config
+          Rails.application.config.hyrax_autopopulation
+        end
     end
   end
 end
