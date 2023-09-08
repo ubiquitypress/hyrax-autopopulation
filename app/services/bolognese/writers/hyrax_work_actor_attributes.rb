@@ -16,12 +16,8 @@ module Bolognese
         }
       end
 
-      def crossref_type
-        @crossref_type = meta["types"].dig("resourceType").underscore
-      end
-
       def map_work_type
-        # @crossref_type = meta["types"].dig("resourceType").underscore
+        @crossref_type = meta["types"].dig("resourceType").underscore
         @crossref_hyku_mappings = Site.account.settings&.dig("crossref_hyku_mappings")
 
         puts "LOG_crossref_type #{@crossref_type.inspect}"
