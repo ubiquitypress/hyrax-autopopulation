@@ -48,8 +48,9 @@ module Hyrax
 
         def actor_environment
           klass = Hyrax::Actors::Environment
-          puts "LOG_ATTRIBUTES #{attributes.inspect}"
-          crossref_work_type = build_crossref_work_type[:crossref_work_type]
+          puts "LOG_ATTRIBUTES #{@attributes.inspect}"
+          crossref_work_type = fetch_crossref_work_type(@attributes[:doi])
+          crossref_work_type = crossref_work_type[:crossref_work_type]
           puts "LOG_ATTRIBUTES #{crossref_work_type.inspect}"
 
           @mapped_work_type = map_work_type(crossref_work_type)
@@ -89,6 +90,10 @@ module Hyrax
           new_admin_set = AdminSet.new(id: SecureRandom.uuid, title: Array.wrap(ADMINSET_NAME))
           admin_set_create_service = ::Hyrax::AdminSetCreateService.new(admin_set: new_admin_set, creating_user: nil).create
           @admin_set = admin_set_create_service.admin_set
+        end
+
+        def fetch_crossref_work_type(doi)
+          config.crossref_bolognese_client.constantize.new(input: doi)&.build_crossref_work_type
         end
     end
   end
