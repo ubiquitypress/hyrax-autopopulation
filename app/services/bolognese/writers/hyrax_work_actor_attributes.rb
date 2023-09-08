@@ -9,6 +9,7 @@ module Bolognese
           doi: Array(meta["doi"]),
           title: meta["titles"].pluck("title"), date_published: write_actor_date_published,
           publisher: Array.wrap(meta["publisher"]),
+          crossref_work_type: meta["types"].dig("resourceType").underscore,
           creator: write_actor_json_field("creator"),
           contributor: write_actor_json_field("contributor"),
           editor: write_actor_json_field("contributor"), resource_type: write_actor_resource_type,
@@ -16,28 +17,12 @@ module Bolognese
         }
       end
 
-      def map_work_type
-        @crossref_type = meta["types"].dig("resourceType").underscore
-        @crossref_hyku_mappings = Site.account.settings&.dig("crossref_hyku_mappings")
-
-        puts "LOG_crossref_type #{@crossref_type.inspect}"
-        puts "LOG_crossref_hyku_mappings #{@crossref_hyku_mappings.inspect}"
-
-        if @crossref_hyku_mappings.key?(@crossref_type)
-          klass_name = @crossref_hyku_mappings[@crossref_type]
-          puts "LOG_klass_name #{klass_name.inspect}"
-          @mapped_work_type = klass_name if class_exists?(klass_name)
-        end
-
-        @mapped_work_type = "GenericWork"
-      end
-
       private
 
         # type eg creators, contributors, editors
         def write_actor_json_field(key_type)
           key_type = key_type.to_s.downcase
-          @mapped_work_type = map_work_type
+          @mapped_work_type = map_work_type(meta["types"].dig("resourceType").underscore)
           if Object.const_get(@mapped_work_type).method_defined?(:json_fields)
             meta[key_type.pluralize].each_with_index.inject([]) do |array, (hash, index)|
               hash["#{key_type}_position"] = index
@@ -59,7 +44,7 @@ module Bolognese
 
         def write_actor_resource_type
           type = meta["types"].dig("resourceType")&.titleize
-          @mapped_work_type = map_work_type
+          @mapped_work_type = map_work_type(meta["types"].dig("resourceType").underscore)
 
           options = if Object.const_defined?("HykuAddons::ResourceTypesService")
                       ::HykuAddons::ResourceTypesService.new(model: Object.const_get(@mapped_work_type)).select_active_options.flatten.uniq
@@ -74,13 +59,6 @@ module Bolognese
         def write_actor_date_published
           date = get_year_month_day(date_registered)
           Array.wrap("date_published_year" => date&.first&.to_s, "date_published_month" => date[1]&.to_s, "date_published_day" => date&.last&.to_s)
-        end
-
-        def class_exists?(class_name)
-          klass = HykuAddons.const_get(class_name)
-          klass.is_a?(Class)
-        rescue NameError
-          false
         end
     end
   end
