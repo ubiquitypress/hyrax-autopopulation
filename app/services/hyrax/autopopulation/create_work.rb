@@ -49,6 +49,7 @@ module Hyrax
         def actor_environment
           klass = Hyrax::Actors::Environment
           puts "LOG_ATTRIBUTES #{attributes.inspect}"
+          @mapped_work_type = map_work_type
           @_actor_environment ||= if Rails.application.config.hyrax_autopopulation.active_record?
                                     klass.new(Object.const_get(@mapped_work_type).new, ::Ability.new(user), attributes)
                                   else

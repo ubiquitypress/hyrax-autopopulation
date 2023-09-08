@@ -4,10 +4,6 @@ module Bolognese
   module Writers
     module HyraxWorkActorAttributes
 
-      # def crossref_work_type
-      #  @crossref_work_type = meta["types"].dig("citeproc")&.titleize
-      # end
-
       def build_work_actor_attributes
         {
           doi: Array(meta["doi"]),
