@@ -17,7 +17,7 @@ module Hyrax
 
         @account = account
         @user = user
-        puts "LOG_ATTRIBUTES #{attributes.inspect}"
+        puts "LOG_ATTRIBUTES_init #{attributes.inspect}"
 
         # set the work state to :inactive which also suppresses or ensures it is not
         # returned by search until approved
@@ -48,10 +48,10 @@ module Hyrax
 
         def actor_environment
           klass = Hyrax::Actors::Environment
-          puts "LOG_ATTRIBUTES #{@attributes.inspect}"
-          crossref_work_type = fetch_crossref_work_type(@attributes[:doi])
-          crossref_work_type = crossref_work_type[:crossref_work_type]
-          puts "LOG_ATTRIBUTES #{crossref_work_type.inspect}"
+          puts "LOG_ATTRIBUTES_actor_env #{@attributes.inspect}"
+          crossref_work_type = fetch_crossref_types(attributes[:doi])
+          crossref_work_type = crossref_work_type[:crossref_work_type].dig("resourceType").underscore
+          puts "LOG_crossref_work_type_create_work #{crossref_work_type.inspect}"
 
           @mapped_work_type = map_work_type(crossref_work_type)
           @_actor_environment ||= if Rails.application.config.hyrax_autopopulation.active_record?
@@ -92,8 +92,8 @@ module Hyrax
           @admin_set = admin_set_create_service.admin_set
         end
 
-        def fetch_crossref_work_type(doi)
-          config.crossref_bolognese_client.constantize.new(input: doi)&.build_crossref_work_type
+        def fetch_crossref_types(doi)
+          config.crossref_bolognese_client.constantize.new(input: doi)&.build_crossref_types
         end
 
         def config
