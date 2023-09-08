@@ -65,7 +65,7 @@ module Bolognese
         end
 
         def map_work_type
-          crossref_type = meta["types"].dig("citeproc").parameterize(separator: "_")
+          crossref_type = meta["types"] # .dig("citeproc").parameterize(separator: "_")
           crossref_hyku_mappings = Site.account.settings&.dig("crossref_hyku_mappings")
 
           puts "LOG_crossref_type #{crossref_type.inspect}"
