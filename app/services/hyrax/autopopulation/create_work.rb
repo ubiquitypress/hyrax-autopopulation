@@ -50,9 +50,9 @@ module Hyrax
           klass = Hyrax::Actors::Environment
           puts "LOG_ATTRIBUTES_actor_env #{@attributes.inspect}"
           crossref_types = fetch_crossref_types(@attributes[:doi])
-          puts "LOG_crossref_work_type_create_work_53 #{crossref_types.inspect}"
+          # puts "LOG_crossref_work_type_create_work_53 #{crossref_types.inspect}"
           crossref_work_type = crossref_types[:types].dig("resourceType").underscore
-          puts "LOG_crossref_work_type_create_work_55 #{crossref_work_type.inspect}"
+          # puts "LOG_crossref_work_type_create_work_55 #{crossref_work_type.inspect}"
 
           @mapped_work_type = map_work_type(crossref_work_type)
           @_actor_environment ||= if Rails.application.config.hyrax_autopopulation.active_record?
