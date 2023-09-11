@@ -20,7 +20,7 @@ module Bolognese
       def build_crossref_types
         {
           doi: Array(meta["doi"]),
-          crossref_work_types: meta["types"].dig("resourceType").underscore
+          crossref_work_types: meta["types"].dig("resourceType")&.underscore
         }
       end
 
@@ -29,7 +29,7 @@ module Bolognese
         # type eg creators, contributors, editors
         def write_actor_json_field(key_type)
           key_type = key_type.to_s.downcase
-          @mapped_work_type = map_work_type(meta["types"].dig("resourceType").underscore)
+          @mapped_work_type = map_work_type(meta["types"].dig("resourceType")&.underscore)
           if Object.const_get(@mapped_work_type).method_defined?(:json_fields)
             meta[key_type.pluralize].each_with_index.inject([]) do |array, (hash, index)|
               hash["#{key_type}_position"] = index
@@ -51,7 +51,7 @@ module Bolognese
 
         def write_actor_resource_type
           type = meta["types"].dig("resourceType")&.titleize
-          @mapped_work_type = map_work_type(meta["types"].dig("resourceType").underscore)
+          @mapped_work_type = map_work_type(meta["types"].dig("resourceType")&.underscore)
 
           options = if Object.const_defined?("HykuAddons::ResourceTypesService")
                       ::HykuAddons::ResourceTypesService.new(model: Object.const_get(@mapped_work_type)).select_active_options.flatten.uniq

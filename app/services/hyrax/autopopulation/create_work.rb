@@ -94,7 +94,6 @@ module Hyrax
         end
 
         def fetch_crossref_types(doi)
-          puts "LOG_fetch_crossref_types #{config.crossref_bolognese_client.constantize.new(input: doi)&.build_crossref_types.inspect}"
           config.crossref_bolognese_client.constantize.new(input: doi)&.build_crossref_types
         end
 
