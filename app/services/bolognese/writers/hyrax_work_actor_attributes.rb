@@ -19,7 +19,7 @@ module Bolognese
 
       def build_crossref_types
         {
-          types: Array.wrap(meta["types"])
+          types: meta["types"]
         }
       end
 
