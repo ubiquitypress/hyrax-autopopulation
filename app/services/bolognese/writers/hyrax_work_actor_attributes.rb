@@ -19,7 +19,7 @@ module Bolognese
 
       def build_crossref_types
         {
-          types: meta["types"]
+          crossref_work_types: meta["types"].dig("resourceType").underscore
         }
       end
 
