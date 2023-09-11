@@ -19,8 +19,7 @@ module Bolognese
 
       def build_crossref_types
         {
-          doi: Array(meta["doi"]),
-          crossref_work_types: meta["types"].dig("resourceType")&.underscore
+          types: Array(meta["types"])
         }
       end
 
