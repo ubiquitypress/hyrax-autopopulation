@@ -50,7 +50,7 @@ module Hyrax
           klass = Hyrax::Actors::Environment
           puts "LOG_ATTRIBUTES_actor_env #{@attributes[:doi][0].to_s.inspect}"
           crossref_types = fetch_crossref_types(@attributes[:doi][0].to_s)
-          # puts "LOG_crossref_work_type_create_work_53 #{crossref_types.inspect}"
+          puts "LOG_crossref_work_type_create_work_53 #{crossref_types.inspect}"
           crossref_work_type = crossref_types[:types].pluck("resourceType")&.underscore
           # puts "LOG_crossref_work_type_create_work_55 #{crossref_work_type.inspect}"
 
