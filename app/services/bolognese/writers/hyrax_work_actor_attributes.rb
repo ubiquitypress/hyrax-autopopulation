@@ -17,11 +17,11 @@ module Bolognese
         }
       end
 
-      def build_crossref_types
-        {
-          types: Array(meta["types"])
-        }
-      end
+      # def build_crossref_types
+      #  {
+      #    types: Array(meta["types"])
+      #  }
+      # end
 
       private
 

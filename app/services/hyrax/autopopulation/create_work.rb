@@ -50,7 +50,7 @@ module Hyrax
           klass = Hyrax::Actors::Environment
           puts "LOG_ATTRIBUTES_actor_env #{@attributes.inspect}"
           # crossref_types = fetch_crossref_types(@attributes[:doi])
-          puts "LOG_crossref_work_type_create_work_53 #{crossref_types.inspect}"
+          # puts "LOG_crossref_work_type_create_work_53 #{crossref_types.inspect}"
           # crossref_work_type = crossref_types[:types].dig("resourceType")&.underscore
           crossref_work_type = "journal_article"
           # puts "LOG_crossref_work_type_create_work_55 #{crossref_work_type.inspect}"
@@ -94,13 +94,13 @@ module Hyrax
           @admin_set = admin_set_create_service.admin_set
         end
 
-        def fetch_crossref_types(doi)
-          config.crossref_bolognese_client.constantize.new(input: doi)&.build_crossref_types
-        end
+        # def fetch_crossref_types(doi)
+        #  config.crossref_bolognese_client.constantize.new(input: doi)&.build_crossref_types
+        # end
 
-        def config
-          Rails.application.config.hyrax_autopopulation
-        end
+        # def config
+        #  Rails.application.config.hyrax_autopopulation
+        # end
     end
   end
 end
