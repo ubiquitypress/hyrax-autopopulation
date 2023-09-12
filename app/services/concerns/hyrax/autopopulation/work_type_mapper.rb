@@ -16,7 +16,8 @@ module Hyrax
           if @crossref_hyku_mappings.key?(crossref_type)
             klass_name = @crossref_hyku_mappings[crossref_type]
             puts "LOG_klass_name #{klass_name.inspect}"
-            return @mapped_work_type = klass_name if class_exists?(klass_name)
+            @mapped_work_type = klass_name if class_exists?(klass_name)
+            return @mapped_work_type
           end
 
           @mapped_work_type = "GenericWork"
