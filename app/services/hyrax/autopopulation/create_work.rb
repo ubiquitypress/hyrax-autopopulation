@@ -56,6 +56,7 @@ module Hyrax
           # puts "LOG_crossref_work_type_create_work_55 #{crossref_work_type.inspect}"
 
           @mapped_work_type = map_work_type(crossref_work_type)
+          puts "LOG_@mapped_work_type_59 #{@mapped_work_type.inspect}"
           @_actor_environment ||= if Rails.application.config.hyrax_autopopulation.active_record?
                                     klass.new(Object.const_get(@mapped_work_type).new, ::Ability.new(user), attributes)
                                   else
