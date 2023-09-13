@@ -17,7 +17,6 @@ module Hyrax
 
         @account = account
         @user = user
-        puts "LOG_ATTRIBUTES_init #{attributes.inspect}"
 
         # set the work state to :inactive which also suppresses or ensures it is not
         # returned by search until approved
@@ -48,14 +47,10 @@ module Hyrax
 
         def actor_environment
           klass = Hyrax::Actors::Environment
-          puts "LOG_ATTRIBUTES_actor_env #{@attributes[:doi][0].to_s.inspect}"
           crossref_types = fetch_crossref_types(@attributes[:doi][0].to_s)
-          puts "LOG_crossref_work_type_create_work_53 #{crossref_types.inspect}"
           crossref_work_type = crossref_types[:types].to_h["resourceType"]&.underscore
-          puts "LOG_crossref_work_type_create_work_55 #{crossref_work_type.inspect}"
 
           @mapped_work_type = map_work_type(crossref_work_type)
-          # puts "LOG_@mapped_work_type_59 #{@mapped_work_type.inspect}"
           @_actor_environment ||= if Rails.application.config.hyrax_autopopulation.active_record?
                                     klass.new(Object.const_get(@mapped_work_type).new, ::Ability.new(user), attributes)
                                   else

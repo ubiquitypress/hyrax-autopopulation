@@ -46,7 +46,6 @@ module Hyrax
 
           return unless unpaywall_data["is_oa"]&.present?
 
-          puts "LOG_DOI_fetch_and_create_work_with_doi #{doi.inspect}"
           work_data = fetch_crossref_work_data(doi)
 
           # adding the file url since crossref does not have it

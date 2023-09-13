@@ -10,12 +10,8 @@ module Hyrax
         def map_work_type(crossref_type)
           @crossref_hyku_mappings = Site.account.settings&.dig("crossref_hyku_mappings")
 
-          puts "LOG_crossref_type #{crossref_type.inspect}"
-          puts "LOG_crossref_hyku_mappings #{@crossref_hyku_mappings.inspect}"
-
           if @crossref_hyku_mappings.key?(crossref_type)
             klass_name = @crossref_hyku_mappings[crossref_type]
-            puts "LOG_klass_name #{klass_name.inspect}"
             @mapped_work_type = klass_name if class_exists?(klass_name)
             return @mapped_work_type
           end
