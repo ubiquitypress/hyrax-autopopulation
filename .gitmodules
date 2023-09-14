@@ -2,3 +2,6 @@
 	path = spec/internal_test_hyrax
 	url = git@github.com:ubiquitypress/hyrax_test_app.git
   branch = main
+[submodule "spec/internal_test_hyku_addons"]
+	path = spec/internal_test_hyku_addons
+	url = https://github.com/ubiquitypress/hyku_addons.git
