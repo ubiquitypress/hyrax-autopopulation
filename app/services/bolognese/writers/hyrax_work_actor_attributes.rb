@@ -12,7 +12,6 @@ module Bolognese
           publisher: Array.wrap(meta["publisher"]),
           creator: write_actor_json_field("creator"),
           contributor: write_actor_json_field("contributor"),
-          # editor: write_actor_json_field("contributor"),
           resource_type: write_actor_resource_type,
           visibility: "open", autopopulation_status: "draft"
         }
@@ -29,8 +28,9 @@ module Bolognese
         # type eg creators, contributors, editors
         def write_actor_json_field(key_type)
           key_type = key_type.to_s.downcase
-          @mapped_work_type = map_work_type(meta["types"].dig("resourceType")&.underscore)
-          if Object.const_get(@mapped_work_type).method_defined?(:json_fields)
+          crossref_hyku_mappings = Site.account.settings&.dig("crossref_hyku_mappings")
+          @mapped_work_type = map_work_type(meta["types"].dig("resourceType")&.underscore, crossref_hyku_mappings)
+          if Object.const_defined?(@mapped_work_type) && Object.const_get(@mapped_work_type).method_defined?(:json_fields)
             meta[key_type.pluralize].each_with_index.inject([]) do |array, (hash, index)|
               hash["#{key_type}_position"] = index
               hash["#{key_type}_name_type"] = hash["nameType"]
@@ -51,7 +51,8 @@ module Bolognese
 
         def write_actor_resource_type
           type = meta["types"].dig("resourceType")&.titleize
-          @mapped_work_type = map_work_type(meta["types"].dig("resourceType")&.underscore)
+          crossref_hyku_mappings = Site.account.settings&.dig("crossref_hyku_mappings")
+          @mapped_work_type = map_work_type(meta["types"].dig("resourceType")&.underscore, crossref_hyku_mappings)
 
           options = if Object.const_defined?("HykuAddons::ResourceTypesService")
                       ::HykuAddons::ResourceTypesService.new(model: Object.const_get(@mapped_work_type)).select_active_options.flatten.uniq

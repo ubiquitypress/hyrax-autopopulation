@@ -18,6 +18,12 @@ RSpec.describe Bolognese::Writers::HyraxWorkActorAttributes do
       autopopulation_status: "draft" }
   end
 
+  let(:crossref_types) do
+    {
+      types: [%w[resourceType journalArticle]]
+    }
+  end
+
   let(:crossref_response) { File.read(Hyrax::Autopopulation::Engine.root.join("spec", "fixtures", "crossref_10.1117_12.2004063.json")) }
 
   let(:metadata_class) do
@@ -30,11 +36,18 @@ RSpec.describe Bolognese::Writers::HyraxWorkActorAttributes do
 
   context "parsed crossref response" do
     let(:transformed_data) { metadata.build_work_actor_attributes }
+    let(:crossref_types_data) { metadata.build_crossref_types }
 
     it "has title in format needed by hyrax actors" do
       transformed_data.keys&.each do |key|
         # expect(transformed_data[:title]).to eq attributes[:title]
         expect(transformed_data[key]).to eq attributes[key]
+      end
+    end
+
+    it "has types" do
+      crossref_types_data.keys&.each do |key|
+        expect(crossref_types_data[key]).to eq crossref_types[key]
       end
     end
   end

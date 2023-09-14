@@ -49,8 +49,9 @@ module Hyrax
           klass = Hyrax::Actors::Environment
           crossref_types = fetch_crossref_types(@attributes[:doi][0].to_s)
           crossref_work_type = crossref_types[:types].to_h["resourceType"]&.underscore
+          crossref_hyku_mappings = Site.account.settings&.dig("crossref_hyku_mappings")
 
-          @mapped_work_type = map_work_type(crossref_work_type)
+          @mapped_work_type = map_work_type(crossref_work_type, crossref_hyku_mappings)
           @_actor_environment ||= if Rails.application.config.hyrax_autopopulation.active_record?
                                     klass.new(Object.const_get(@mapped_work_type).new, ::Ability.new(user), attributes)
                                   else
