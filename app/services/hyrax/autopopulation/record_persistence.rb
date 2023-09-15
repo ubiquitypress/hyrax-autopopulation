@@ -47,7 +47,6 @@ module Hyrax
         works&.compact&.each do |work|
           work&.file_sets&.first&.update(visibility: "open")
           work.update(autopopulation_status: "approved", visibility: "open", state: Vocab::FedoraResourceStatus.active)
-          puts "LOG_WORK_STATE_APPROVED_WORKS_AFTER_UPDATE #{work.state.inspect}"
         end
       end
 

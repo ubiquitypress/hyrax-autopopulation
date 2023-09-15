@@ -3,6 +3,7 @@
 module Hyrax
   module Autopopulation
     class CreateWork
+      include Hyrax::Autopopulation::WorkTypeMapper
       attr_accessor :attributes, :user, :account, :pdf_url, :uploaded_files, :admin_set
       ADMINSET_NAME = "autopopulation".freeze
 
@@ -20,7 +21,6 @@ module Hyrax
         # set the work state to :inactive which also suppresses or ensures it is not
         # returned by search until approved
         attributes[:state] = Vocab::FedoraResourceStatus.inactive
-        puts "LOG_ATTRIBUTES_STATE_INITIALIZE_AFTER_ASSIGNMENT #{attributes[:state].inspect}"
         # This is not a property of any work, so it cannot be passed to the actor
         @pdf_url = attributes.delete(:unpaywall_pdf_url)
         # create Hyrax::Uploaded file object if a pdf url exists
@@ -29,18 +29,12 @@ module Hyrax
         # create or set the admin_set to be used for this work
         attributes[:admin_set_id] = get_admin_set.id if get_admin_set.present?
         @attributes = attributes
-
-        # Logging
-        puts "LOG_ATTRIBUTES_STATE_INITIALIZE #{@attributes[:state].inspect}"
-        puts "LOG_ACTOR_ENVIRONMENT_INITIALIZE #{actor_environment.curation_concern.attributes.inspect}"
       end
 
       def save
         # saves work
         # This returns true when the work is aved or false
-        puts "LOG_ACTOR_ENVIRONMENT_SAVE_BEFORE_CREATE #{actor_environment.curation_concern.attributes.inspect}"
         actor.create(actor_environment)
-        puts "LOG_ACTOR_ENVIRONMENT_SAVE_AFTER_CREATE #{actor_environment.curation_concern.attributes.inspect}"
 
         # attach files to the work
         AttachFilesToWorkJob.perform_later(actor_environment.curation_concern, @uploaded_files) if @uploaded_files.present?
@@ -54,16 +48,18 @@ module Hyrax
 
         def actor_environment
           klass = Hyrax::Actors::Environment
+          crossref_types = fetch_crossref_types(@attributes[:doi][0].to_s)
+          crossref_work_type = crossref_types[:types].to_h["resourceType"]&.underscore
+          crossref_hyku_mappings = Site.account.settings&.dig("crossref_hyku_mappings")
 
-          puts "LOG_ATTRIBUTES_ACTOR_ENVIRONMENT #{attributes.inspect}"
-
+          @mapped_work_type = map_work_type(crossref_work_type, crossref_hyku_mappings)
           @_actor_environment ||= if Rails.application.config.hyrax_autopopulation.active_record?
-                                    klass.new(GenericWork.new, ::Ability.new(user), attributes)
+                                    klass.new(Object.const_get(@mapped_work_type).new, ::Ability.new(user), attributes)
                                   else
                                     # Remove fields not defined by Hyrax
                                     keys = %i[date_published editor]
                                     new_attributes = attributes.except(*keys)
-                                    klass.new(GenericWork.new, ::Ability.new(user), new_attributes)
+                                    klass.new(Object.const_get(@mapped_work_type).new, ::Ability.new(user), new_attributes)
                                   end
         end
 
@@ -93,6 +89,14 @@ module Hyrax
           new_admin_set = AdminSet.new(id: SecureRandom.uuid, title: Array.wrap(ADMINSET_NAME))
           admin_set_create_service = ::Hyrax::AdminSetCreateService.new(admin_set: new_admin_set, creating_user: nil).create
           @admin_set = admin_set_create_service.admin_set
+        end
+
+        def fetch_crossref_types(doi)
+          config.crossref_bolognese_client.constantize.new(input: doi)&.build_crossref_types
+        end
+
+        def config
+          Rails.application.config.hyrax_autopopulation
         end
     end
   end
