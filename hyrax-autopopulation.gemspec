@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
   spec.add_dependency "rails", "~> 5.2.6"
-  spec.add_dependency "hyrax", "~> 3.5"
+  spec.add_dependency "hyrax", "~> 2.9"
   spec.add_dependency "flipflop", "~> 2.6"
   spec.add_dependency "bolognese", "~> 1.9", ">= 1.9.9"
 
