@@ -6,7 +6,7 @@ module Bolognese
       include Hyrax::Autopopulation::WorkTypeMapper
 
       def build_work_actor_attributes
-        {
+        hash = {
           doi: Array(meta["doi"]),
           title: meta["titles"].pluck("title"), date_published: write_actor_date_published,
           publisher: Array.wrap(meta["publisher"]),
@@ -15,6 +15,8 @@ module Bolognese
           resource_type: write_actor_resource_type,
           visibility: "open", autopopulation_status: "draft"
         }
+
+        hash.reject { |_, v| v.nil? }
       end
 
       def build_crossref_types
