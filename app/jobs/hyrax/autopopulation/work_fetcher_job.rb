@@ -19,7 +19,9 @@ module Hyrax
       #
       def perform(args)
         orchestrator = Rails.application.config.hyrax_autopopulation.orchestrator_class
+        puts "LOG_orchestrator: #{orchestrator.inspect}"
         instance = orchestrator.constantize.new(**args)
+        puts "LOG_instance: #{instance.inspect}"
         instance.fetch_doi_list
         instance.create_records
       end
