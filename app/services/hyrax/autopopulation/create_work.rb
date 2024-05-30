@@ -87,8 +87,8 @@ module Hyrax
         # creates admin_set for autopopulated works only if non exists
         def create_admin_set
           new_admin_set = AdminSet.new(id: SecureRandom.uuid, title: Array.wrap(ADMINSET_NAME))
-          admin_set_create_service = ::Hyrax::AdminSetCreateService.new(admin_set: new_admin_set, creating_user: nil).create
-          @admin_set = admin_set_create_service.admin_set
+          ::Hyrax::AdminSetCreateService.new(admin_set: new_admin_set, creating_user: nil).create
+          @admin_set = new_admin_set
         end
 
         def fetch_crossref_types(doi)
