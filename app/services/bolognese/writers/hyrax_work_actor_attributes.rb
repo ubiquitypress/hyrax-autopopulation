@@ -54,12 +54,10 @@ module Bolognese
           crossref_hyku_mappings = Site.account.settings&.dig("crossref_hyku_mappings")
           @mapped_work_type = map_work_type(meta["types"].dig("resourceType")&.underscore, crossref_hyku_mappings)
 
-          options = if Object.const_defined?("HykuAddons::ResourceTypesService")
+          options = if @mapped_work_type && Object.const_defined?("HykuAddons::ResourceTypesService")
                       ::HykuAddons::ResourceTypesService.new(model: Object.const_get(@mapped_work_type)).select_active_options.flatten.uniq
-                      # options.include?(type) ? Array.wrap(type) : ["Other"]
                     else
                       ::Hyrax::ResourceTypesService.select_options.flatten.uniq
-                      # options.include?(type) ? Array.wrap(type) : ["Other"]
                     end
           options.include?(type) ? Array.wrap(type) : ["Other"]
         end
