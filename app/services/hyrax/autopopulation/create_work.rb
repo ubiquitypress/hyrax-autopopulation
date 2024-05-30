@@ -54,12 +54,12 @@ module Hyrax
 
           @mapped_work_type = map_work_type(crossref_work_type, crossref_hyku_mappings)
           @_actor_environment ||= if Rails.application.config.hyrax_autopopulation.active_record?
-                                    klass.new(Object.const_get(@mapped_work_type).new, ::Ability.new(user), attributes)
+                                    klass.new((@mapped_work_type && Object.const_get(@mapped_work_type)&.new), ::Ability.new(user), attributes)
                                   else
                                     # Remove fields not defined by Hyrax
                                     keys = %i[date_published editor]
                                     new_attributes = attributes.except(*keys)
-                                    klass.new(Object.const_get(@mapped_work_type).new, ::Ability.new(user), new_attributes)
+                                    klass.new((@mapped_work_type && Object.const_get(@mapped_work_type)&.new), ::Ability.new(user), new_attributes)
                                   end
         end
 
