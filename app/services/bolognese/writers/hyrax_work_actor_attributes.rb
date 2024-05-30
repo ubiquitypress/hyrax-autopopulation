@@ -30,7 +30,7 @@ module Bolognese
           key_type = key_type.to_s.downcase
           crossref_hyku_mappings = Site.account.settings&.dig("crossref_hyku_mappings")
           @mapped_work_type = map_work_type(meta["types"].dig("resourceType")&.underscore, crossref_hyku_mappings)
-          if Object.const_defined?(@mapped_work_type) && Object.const_get(@mapped_work_type).method_defined?(:json_fields)
+          if @mapped_work_type && Object.const_defined?(@mapped_work_type) && Object.const_get(@mapped_work_type).method_defined?(:json_fields)
             meta[key_type.pluralize].each_with_index.inject([]) do |array, (hash, index)|
               hash["#{key_type}_position"] = index
               hash["#{key_type}_name_type"] = hash["nameType"]
