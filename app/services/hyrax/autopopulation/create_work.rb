@@ -48,7 +48,7 @@ module Hyrax
 
         def actor_environment
           klass = Hyrax::Actors::Environment
-          crossref_types = fetch_crossref_types(@attributes[:doi][0].to_s)
+          crossref_types = fetch_crossref_types(@attributes.try(:[], :doi).try(:[], 0).to_s)
           crossref_work_type = crossref_types[:types].to_h["resourceType"]&.underscore
           crossref_hyku_mappings = Site.account.settings&.dig("crossref_hyku_mappings")
 
