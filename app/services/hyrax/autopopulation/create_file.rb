@@ -14,7 +14,10 @@ module Hyrax
 
         return unless @url.present?
 
-        @filename = URI.parse(url).path.split('/').last # Extract file name from url
+        @filename = File.basename(url)
+        puts "LOG_URL: #{url.inspect}"
+        puts "LOG_File.basename(url): #{File.basename(url).inspect}"
+        puts "LOG_@filename: #{@filename.inspect}"
         @user = user
         @account = account
       end
