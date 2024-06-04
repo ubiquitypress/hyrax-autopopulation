@@ -14,10 +14,12 @@ module Hyrax
 
         return unless @url.present?
 
-        @filename = File.basename(URI.parse(url).path) # Extract file name without params from url
+        @filename = File.basename(url)
+        @new_filename = File.basename(URI.parse(url).path) # Extract file name without params from url
         puts "LOG_URL: #{url.inspect}"
         puts "LOG_File.basename(url): #{File.basename(url).inspect}"
         puts "LOG_@filename: #{@filename.inspect}"
+        puts "LOG_@new_filename: #{@new_filename.inspect}"
         @user = user
         @account = account
       end
