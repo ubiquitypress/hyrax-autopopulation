@@ -16,6 +16,12 @@ module Hyrax
 
         @filename = File.basename(url)
         @new_filename = File.basename(URI.parse(url).path) # Extract file name without params from url
+
+        if @new_filename.length > 255
+          hashed_part = Digest::SHA256.hexdigest(@new_filename)[0, 10] # take first 10 char of hash
+          @new_filename = "#{hashed_part}-#{@new_filename[0, 244]}" # truncate original name and append hash
+        end
+
         puts "LOG_URL: #{url.inspect}"
         puts "LOG_File.basename(url): #{File.basename(url).inspect}"
         puts "LOG_@filename: #{@filename.inspect}"
