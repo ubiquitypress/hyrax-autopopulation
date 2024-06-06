@@ -14,7 +14,11 @@ module Hyrax
 
         return unless @url.present?
 
-        @filename = File.basename(URI.parse(url).path) # Extract file name without params from url
+        Rails.logger.info "URL passed to CreateFile initializer: #{@url}"
+        @filename = File.basename(URI.parse(url).path)
+        Rails.logger.info "Filename after extraction: #{@filename}"
+
+        # @filename = File.basename(URI.parse(url).path) # Extract file name without params from url
 
         if @filename.length > 255
           hashed_part = Digest::SHA256.hexdigest(@filename)[0, 10] # take first 10 char of hash
