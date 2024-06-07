@@ -12,19 +12,20 @@ module Hyrax
 
         @url = url&.strip
 
-        return unless @url.present?
-
-        Rails.logger.info "LOG_URL passed to CreateFile initializer: #{@url}"
-        @filename = File.basename(URI.parse(url).path)
-        Rails.logger.info "LOG_Filename after extraction: #{@filename}"
-
-        # @filename = File.basename(URI.parse(url).path) # Extract file name without params from url
-
-        if @filename.length > 255
-          hashed_part = Digest::SHA256.hexdigest(@filename)[0, 10] # take first 10 char of hash
-          @filename = "#{hashed_part}-#{@filename[0, 244]}" # truncate original name and append hash
+        unless @url.present?
+          Rails.logger.error "URL was not provided."
+          return
         end
 
+        Rails.logger.info "LOG_URL passed to CreateFile initializer: #{@url}"
+        begin
+          @filename = File.basename(URI.parse(url).path)
+          Rails.logger.info "LOG_Filename after extraction: #{@filename}"
+        rescue => e
+          Rails.logger.error "Failed to extract a filename from the url: #{@url}. Error: #{e}"
+          return
+        end
+        # Reconstruct filename code here
         @user = user
         @account = account
       end
