@@ -14,9 +14,9 @@ module Hyrax
 
         return unless @url.present?
 
-        Rails.logger.info "URL passed to CreateFile initializer: #{@url}"
+        Rails.logger.info "LOG_URL passed to CreateFile initializer: #{@url}"
         @filename = File.basename(URI.parse(url).path)
-        Rails.logger.info "Filename after extraction: #{@filename}"
+        Rails.logger.info "LOG_Filename after extraction: #{@filename}"
 
         # @filename = File.basename(URI.parse(url).path) # Extract file name without params from url
 
