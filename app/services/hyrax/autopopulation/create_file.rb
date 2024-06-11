@@ -38,19 +38,26 @@ module Hyrax
       private
 
         def file_io_object
-          file = Tempfile.new(filename)
-          # avoid OpenSSL::SSL::SSLError
-          string_io = URI.open(url, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
-          file.binmode
-          file.write string_io.read
+          begin
+            file = Tempfile.new(filename)
+            string_io = URI.open(url, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
+            file.binmode
+            file.write string_io.read
 
-          file_io = ActionDispatch::Http::UploadedFile.new(tempfile: file, filename: filename)
-          file.close
-          file_io
+            file_io = ActionDispatch::Http::UploadedFile.new(tempfile: file, filename: filename)
+            file.close
+            file_io
+          rescue OpenURI::HTTPError => e
+            Rails.logger.error "Failed to open URL #{url}. Error: #{e}"
 
-        rescue OpenURI::HTTPError, OpenSSL::SSL::SSLError => e
-          Rails.logger.info "#{e} for this url #{url}"
-        end
+            # Here we only log the 400 Bad Request error
+            if e.message.include?('400 Bad Request')
+              Rails.logger.error "Received 400 Bad Request error. The token is likely expired."
+            end
+          rescue OpenSSL::SSL::SSLError => e
+            Rails.logger.error "#{e} for this url #{url}"
+          end
+      end
     end
   end
 end
