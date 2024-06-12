@@ -12,20 +12,20 @@ module Hyrax
 
         @url = url&.strip
 
-        unless @url.present?
-          Rails.logger.error "URL was not provided."
-          return
-        end
+        return unless @url.present?
 
         Rails.logger.info "LOG_URL passed to CreateFile initializer: #{@url}"
-        begin
-          @filename = File.basename(URI.parse(url).path)
-          Rails.logger.info "LOG_Filename after extraction: #{@filename}"
-        rescue => e
-          Rails.logger.error "Failed to extract a filename from the url: #{@url}. Error: #{e}"
-          return
+        @filename = File.basename(url)
+        # @filename = File.basename(URI.parse(url).path)
+        Rails.logger.info "LOG_Filename after extraction: #{@filename}"
+
+        if @filename.length > 255
+          hashed_part = Digest::SHA256.hexdigest(@filename)[0, 10] # take first 10 char of hash
+          @filename = "#{hashed_part}-#{@filename[0, 244]}" # truncate original name and append hash
         end
-        # Reconstruct filename code here
+
+        Rails.logger.info "LOG_Filename after truncation: #{@filename}"
+
         @user = user
         @account = account
       end
@@ -38,26 +38,19 @@ module Hyrax
       private
 
         def file_io_object
-          begin
-            file = Tempfile.new(filename)
-            string_io = URI.open(url, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
-            file.binmode
-            file.write string_io.read
+          file = Tempfile.new(filename)
+          # avoid OpenSSL::SSL::SSLError
+          string_io = URI.open(url, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
+          file.binmode
+          file.write string_io.read
 
-            file_io = ActionDispatch::Http::UploadedFile.new(tempfile: file, filename: filename)
-            file.close
-            file_io
-          rescue OpenURI::HTTPError => e
-            Rails.logger.error "Failed to open URL #{url}. Error: #{e}"
+          file_io = ActionDispatch::Http::UploadedFile.new(tempfile: file, filename: filename)
+          file.close
+          file_io
 
-            # Here we only log the 400 Bad Request error
-            if e.message.include?('400 Bad Request')
-              Rails.logger.error "Received 400 Bad Request error. The token is likely expired."
-            end
-          rescue OpenSSL::SSL::SSLError => e
-            Rails.logger.error "#{e} for this url #{url}"
-          end
-      end
+        rescue OpenURI::HTTPError, OpenSSL::SSL::SSLError => e
+          Rails.logger.info "#{e} for this url #{url}"
+        end
     end
   end
 end
