@@ -32,12 +32,15 @@ module Hyrax
 
       def save
         file_io = file_io_object
+        return unless file_io
+
         Hyrax::UploadedFile.create(file: file_io, user: user)
       end
 
       private
 
-        def file_io_object
+      def file_io_object
+        begin
           file = Tempfile.new(filename)
           # avoid OpenSSL::SSL::SSLError
           string_io = URI.open(url, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
@@ -47,11 +50,11 @@ module Hyrax
           file_io = ActionDispatch::Http::UploadedFile.new(tempfile: file, filename: filename)
           file.close
           file_io
-
         rescue OpenURI::HTTPError, OpenSSL::SSL::SSLError => e
-          Rails.logger.info "#{e} for this url #{url}"
-          raise "Error reading file from URL #{url}: #{e.message}"
+          Rails.logger.error "#{e} for URL #{url}"
+          return nil
         end
+      end
     end
   end
 end
