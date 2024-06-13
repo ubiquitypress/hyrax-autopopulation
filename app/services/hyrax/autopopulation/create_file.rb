@@ -15,6 +15,7 @@ module Hyrax
         return unless @url.present?
 
         @filename = File.basename(URI.parse(url).path)
+        Rails.logger.info "LOG_Filename after extraction: #{@filename}"
 
         if @filename.length > 255
           hashed_part = Digest::SHA256.hexdigest(@filename)[0, 10] # take first 10 char of hash
