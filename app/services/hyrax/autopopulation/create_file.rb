@@ -14,6 +14,7 @@ module Hyrax
 
         return unless @url.present?
 
+        Rails.logger.info "LOG_URL: #{url}"
         @filename = File.basename(URI.parse(url).path)
         Rails.logger.info "LOG_Filename after extraction: #{@filename}"
 
