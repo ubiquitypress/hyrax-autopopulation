@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'digest'
 
 module Hyrax
   module Autopopulation
@@ -15,7 +16,7 @@ module Hyrax
         return unless @url.present?
 
         Rails.logger.info "LOG_URL: #{url}"
-        @filename = File.basename(URI.parse(url).path)
+        set_filename(url)
         Rails.logger.info "LOG_Filename after extraction: #{@filename}"
 
         if @filename.length > 255
@@ -35,6 +36,23 @@ module Hyrax
       end
 
       private
+
+      def set_filename(url)
+        filename = File.basename(url)
+
+        # If filename is more than 255 characters, modify it
+        if filename.length > 255
+          filename = File.basename(URI.parse(url).path)
+
+          # If filename is still more than 255 characters after modification, hash and truncate it as last resort
+          if filename.length > 255
+            hashed_part = Digest::SHA256.hexdigest(filename)[0, 10] # take first 10 chars of hash
+            filename = "#{hashed_part}-#{filename[0, 200]}" # truncate original name and append hash
+          end
+        end
+
+        @filename = filename
+      end
 
       def file_io_object
         begin
