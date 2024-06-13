@@ -14,17 +14,12 @@ module Hyrax
 
         return unless @url.present?
 
-        Rails.logger.info "LOG_URL passed to CreateFile initializer: #{@url}"
-        # @filename = File.basename(url)
         @filename = File.basename(URI.parse(url).path)
-        Rails.logger.info "LOG_Filename after extraction: #{@filename}"
 
         if @filename.length > 255
           hashed_part = Digest::SHA256.hexdigest(@filename)[0, 10] # take first 10 char of hash
           @filename = "#{hashed_part}-#{@filename[0, 200]}" # truncate original name and append hash
         end
-
-        Rails.logger.info "LOG_Filename after truncation: #{@filename}"
 
         @user = user
         @account = account
