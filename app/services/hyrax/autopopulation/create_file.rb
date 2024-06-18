@@ -43,10 +43,14 @@ module Hyrax
           end
         end
 
+        Rails.logger.info "LOG_File.extname(filename).empty?: #{File.extname(filename).empty?}"
+        Rails.logger.info "LOG_File.extname(filename): #{File.extname(filename)}"
         # Add .pdf extension if filename does not have an extension
         if File.extname(filename).empty?
+          Rails.logger.info "LOG_inside the if condition"
           filename += ".pdf"
         end
+        Rails.logger.info "LOG_filename: #{filename}"
 
         @filename = filename
       end
