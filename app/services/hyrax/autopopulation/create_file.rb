@@ -43,6 +43,11 @@ module Hyrax
           end
         end
 
+        # Add .pdf extension if filename does not have an extension
+        if File.extname(filename).empty?
+          filename += ".pdf"
+        end
+
         @filename = filename
       end
 
