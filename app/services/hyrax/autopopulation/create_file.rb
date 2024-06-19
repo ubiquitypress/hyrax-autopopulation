@@ -36,10 +36,15 @@ module Hyrax
         if filename.length > 255
           filename = File.basename(URI.parse(url).path)
 
-          # If filename is still more than 255 characters after modification, hash and truncate it as last resort
+          # If filename is still more than 255 characters after modification, hash part of it
           if filename.length > 255
             hashed_part = Digest::SHA256.hexdigest(filename)[0, 10] # take first 10 chars of hash
-            filename = "#{hashed_part}-#{filename[0, 200]}" # truncate original name and append hash
+            # Cut to 180 chars to make space for hash and extension
+            base = filename[0, 180]
+            # Get extension
+            ext = File.extname(base)
+
+            filename = "#{hashed_part}-#{base}#{ext}"
           end
         end
 
@@ -47,21 +52,21 @@ module Hyrax
 
         # List of common document file extensions
         expected_extensions = [
-          ".doc", ".docx",   # Word documents
-          ".xls", ".xlsx",   # Excel sheets
-          ".ppt", ".pptx",   # PowerPoint presentations
-          ".pdf",            # PDF files
-          ".txt",            # Text files
-          ".md",             # Markdown files
-          ".odt",            # OpenDocument texts
-          ".ods",            # OpenDocument spreadsheets
-          ".odp",            # OpenDocument presentations
-          ".csv",            # CSV files
-          ".rtf",            # RTF files
-          ".tex", ".latex"   # LaTeX documents
+          ".doc", ".docx",
+          ".xls", ".xlsx",
+          ".ppt", ".pptx",
+          ".pdf",
+          ".txt",
+          ".md",
+          ".odt",
+          ".ods",
+          ".odp",
+          ".csv",
+          ".rtf",
+          ".tex", ".latex"
         ]
 
-        unless expected_extensions.include? file_extension
+        if file_extension.blank? || !expected_extensions.include?(file_extension.downcase)
           filename += ".pdf"
         end
 
