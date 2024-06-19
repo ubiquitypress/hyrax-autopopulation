@@ -59,25 +59,11 @@ module Hyrax
           ".csv",            # CSV files
           ".rtf",            # RTF files
           ".tex", ".latex"   # LaTeX documents
-        # ... add more as needed
         ]
 
-        Rails.logger.info "LOG_File.extname(filename).empty?_before: #{File.extname(filename).empty?}"
-        Rails.logger.info "LOG_File.extname(filename)_before: #{File.extname(filename)}"
-
         unless expected_extensions.include? file_extension
-          Rails.logger.info "LOG_inside the if include? condition"
           filename += ".pdf"
         end
-
-        Rails.logger.info "LOG_File.extname(filename).empty?_after: #{File.extname(filename).empty?}"
-        Rails.logger.info "LOG_File.extname(filename)_after: #{File.extname(filename)}"
-        # Add .pdf extension if filename does not have an extension
-        if File.extname(filename).empty?
-          Rails.logger.info "LOG_inside the if empty? condition"
-          filename += ".pdf"
-        end
-        Rails.logger.info "LOG_filename: #{filename}"
 
         @filename = filename
       end
