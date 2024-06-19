@@ -43,11 +43,38 @@ module Hyrax
           end
         end
 
-        Rails.logger.info "LOG_File.extname(filename).empty?: #{File.extname(filename).empty?}"
-        Rails.logger.info "LOG_File.extname(filename): #{File.extname(filename)}"
+        file_extension = File.extname(filename)
+
+        # List of common document file extensions
+        expected_extensions = [
+          ".doc", ".docx",   # Word documents
+          ".xls", ".xlsx",   # Excel sheets
+          ".ppt", ".pptx",   # PowerPoint presentations
+          ".pdf",            # PDF files
+          ".txt",            # Text files
+          ".md",             # Markdown files
+          ".odt",            # OpenDocument texts
+          ".ods",            # OpenDocument spreadsheets
+          ".odp",            # OpenDocument presentations
+          ".csv",            # CSV files
+          ".rtf",            # RTF files
+          ".tex", ".latex"   # LaTeX documents
+        # ... add more as needed
+        ]
+
+        Rails.logger.info "LOG_File.extname(filename).empty?_before: #{File.extname(filename).empty?}"
+        Rails.logger.info "LOG_File.extname(filename)_before: #{File.extname(filename)}"
+
+        unless expected_extensions.include? file_extension
+          Rails.logger.info "LOG_inside the if include? condition"
+          filename += ".pdf"
+        end
+
+        Rails.logger.info "LOG_File.extname(filename).empty?_after: #{File.extname(filename).empty?}"
+        Rails.logger.info "LOG_File.extname(filename)_after: #{File.extname(filename)}"
         # Add .pdf extension if filename does not have an extension
         if File.extname(filename).empty?
-          Rails.logger.info "LOG_inside the if condition"
+          Rails.logger.info "LOG_inside the if empty? condition"
           filename += ".pdf"
         end
         Rails.logger.info "LOG_filename: #{filename}"
