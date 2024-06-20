@@ -4,6 +4,9 @@ require 'digest'
 module Hyrax
   module Autopopulation
     class CreateFile
+      # List of common document file extensions
+      EXPECTED_EXTENSIONS = %w[.doc .docx .xls .xlsx .ppt .pptx .pdf .txt .md .odt .ods .odp .csv .rtf .tex .latex].freeze
+
       attr_accessor :url, :user, :account, :filename
 
       # params :url is the remote file localtion from unpaywall response
@@ -36,11 +39,22 @@ module Hyrax
         if filename.length > 255
           filename = File.basename(URI.parse(url).path)
 
-          # If filename is still more than 255 characters after modification, hash and truncate it as last resort
+          # If filename is still more than 255 characters after modification, hash part of it
           if filename.length > 255
             hashed_part = Digest::SHA256.hexdigest(filename)[0, 10] # take first 10 chars of hash
-            filename = "#{hashed_part}-#{filename[0, 200]}" # truncate original name and append hash
+            # Cut to 180 chars to make space for hash and extension
+            base = filename[0, 180]
+            # Get extension
+            ext = File.extname(base)
+
+            filename = "#{hashed_part}-#{base}#{ext}"
           end
+        end
+
+        file_extension = File.extname(filename)
+
+        if file_extension.blank? || !EXPECTED_EXTENSIONS.include?(file_extension.downcase)
+          filename += ".pdf"
         end
 
         @filename = filename
