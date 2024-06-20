@@ -4,6 +4,9 @@ require 'digest'
 module Hyrax
   module Autopopulation
     class CreateFile
+      # List of common document file extensions
+      EXPECTED_EXTENSIONS = %w[.doc .docx .xls .xlsx .ppt .pptx .pdf .txt .md .odt .ods .odp .csv .rtf .tex .latex].freeze
+
       attr_accessor :url, :user, :account, :filename
 
       # params :url is the remote file localtion from unpaywall response
@@ -50,23 +53,7 @@ module Hyrax
 
         file_extension = File.extname(filename)
 
-        # List of common document file extensions
-        expected_extensions = [
-          ".doc", ".docx",
-          ".xls", ".xlsx",
-          ".ppt", ".pptx",
-          ".pdf",
-          ".txt",
-          ".md",
-          ".odt",
-          ".ods",
-          ".odp",
-          ".csv",
-          ".rtf",
-          ".tex", ".latex"
-        ]
-
-        if file_extension.blank? || !expected_extensions.include?(file_extension.downcase)
+        if file_extension.blank? || !EXPECTED_EXTENSIONS.include?(file_extension.downcase)
           filename += ".pdf"
         end
 
