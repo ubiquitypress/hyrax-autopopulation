@@ -13,7 +13,7 @@ module Hyrax
       # attributes = response.build_work_actor_attributes
       #
       def initialize(attributes, user, account = nil)
-        AccountElevator.switch!(account&.cname) if Rails.application.config.hyrax_autopopulation.active_record?
+        AccountElevator.switch!(account&.cname) if Rails.application.config.hyrax_autopopulation.activFe_record?
 
         @account = account
         @user = user
@@ -34,6 +34,7 @@ module Hyrax
       def save
         # saves work
         # This returns true when the work is aved or false
+        Rails.logger.info "LOG_actor_environment: #{actor_environment}"
         actor.create(actor_environment)
 
         # attach files to the work
