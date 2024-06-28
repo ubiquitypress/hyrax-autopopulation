@@ -33,9 +33,22 @@ module Hyrax
 
       def save
         # saves work
-        # This returns true when the work is aved or false
-        Rails.logger.info "LOG_actor_environment: #{actor_environment}"
+        # This returns true when the work is saved or false
+
+        # Add the debug output here
+        Rails.logger.debug "================================================"
+        Rails.logger.debug "BEFORE creating actor for work:"
+        Rails.logger.debug "Actor environment: #{actor_environment.inspect}"
+        Rails.logger.debug "State: #{actor_environment.attributes[:state]}"
+        Rails.logger.debug "================================================"
+
         actor.create(actor_environment)
+
+        # Add the debug output here
+        Rails.logger.debug "================================================"
+        Rails.logger.debug "AFTER creating actor for work:"
+        Rails.logger.debug "State: #{actor_environment.curation_concern.state}"
+        Rails.logger.debug "================================================"
 
         # attach files to the work
         AttachFilesToWorkJob.perform_later(actor_environment.curation_concern, @uploaded_files) if @uploaded_files.present?
