@@ -13,7 +13,7 @@ module Hyrax
       # attributes = response.build_work_actor_attributes
       #
       def initialize(attributes, user, account = nil)
-        AccountElevator.switch!(account&.cname) if Rails.application.config.hyrax_autopopulation.activFe_record?
+        AccountElevator.switch!(account&.cname) if Rails.application.config.hyrax_autopopulation.active_record?
 
         @account = account
         @user = user
